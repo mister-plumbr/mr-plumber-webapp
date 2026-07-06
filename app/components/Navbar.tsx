@@ -42,7 +42,7 @@ export default function Navbar() {
             Get estimate
           </Link>
           <Link
-            href="#"
+            href="/login"
             className="text-[16px] font-normal text-[#62646a] hover:text-[#f97316] transition-colors"
           >
             Sign in
@@ -87,7 +87,7 @@ export default function Navbar() {
               Get estimate
             </Link>
             <Link
-              href="#"
+              href="/login"
               className="text-[16px] font-normal text-[#62646a] hover:text-[#f97316]"
               onClick={() => setMobileOpen(false)}
             >
