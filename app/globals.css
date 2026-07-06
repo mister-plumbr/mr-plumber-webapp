@@ -1,26 +1,194 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Orange Primary System */
+  --color-orange-primary: #f97316;
+  --color-orange-hover: #ea580c;
+  --color-orange-soft: #fff7ed;
+  --color-orange-border: #fdba74;
+  --color-orange-stage: #7c2d12;
+  --color-orange-deep: #431407;
+
+  /* Neutral Backbone */
+  --color-carbon: #222325;
+  --color-graphite: #62646a;
+  --color-paper: #ffffff;
+  --color-mist: #dadbdd;
+  --color-fog: #c5c6c9;
+  --color-slate: #404145;
+  --color-smoke: #74767e;
+
+  /* Surfaces */
+  --surface-canvas: #ffffff;
+  --surface-card: #ffffff;
+  --surface-dark-stage: #222325;
+  --surface-orange-stage: #7c2d12;
+
+  /* Typography Scale */
+  --text-caption: 10px;
+  --leading-caption: 1.56;
+  --text-body-sm: 14px;
+  --leading-body-sm: 1.57;
+  --text-body: 16px;
+  --leading-body: 1.5;
+  --text-subheading: 18px;
+  --leading-subheading: 1.2;
+  --text-heading-lg: 48px;
+  --leading-heading-lg: 1.05;
+  --tracking-heading-lg: -1.44px;
+  --text-display: 72px;
+  --leading-display: 1;
+  --tracking-display: -4.32px;
+
+  /* Weights */
+  --font-weight-display: 300;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-56: 56px;
+
+  /* Layout */
+  --page-max-width: 1200px;
+  --section-gap: 40px;
+  --card-padding: 16px;
+  --element-gap: 12px;
+
+  /* Radii */
+  --radius-nav: 4px;
+  --radius-button: 8px;
+  --radius-input: 12px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-md: rgba(0, 0, 0, 0.13) 0px 3px 10px 0px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-orange-primary: #f97316;
+  --color-orange-hover: #ea580c;
+  --color-orange-soft: #fff7ed;
+  --color-orange-border: #fdba74;
+  --color-orange-stage: #7c2d12;
+  --color-orange-deep: #431407;
+
+  --color-carbon: #222325;
+  --color-graphite: #62646a;
+  --color-paper: #ffffff;
+  --color-mist: #dadbdd;
+  --color-fog: #c5c6c9;
+  --color-slate: #404145;
+  --color-smoke: #74767e;
+
+  --color-background: var(--surface-canvas);
+  --color-foreground: var(--color-carbon);
+
+  /* Typography */
+  --font-sans: var(--font-inter);
+  --text-caption: 10px;
+  --leading-caption: 1.56;
+  --text-body-sm: 14px;
+  --leading-body-sm: 1.57;
+  --text-body: 16px;
+  --leading-body: 1.5;
+  --text-subheading: 18px;
+  --leading-subheading: 1.2;
+  --text-heading-lg: 48px;
+  --leading-heading-lg: 1.05;
+  --tracking-heading-lg: -1.44px;
+  --text-display: 72px;
+  --leading-display: 1;
+  --tracking-display: -4.32px;
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-56: 56px;
+
+  /* Radii */
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-md: rgba(0, 0, 0, 0.13) 0px 3px 10px 0px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface-canvas);
+  color: var(--color-carbon);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Display headline signature: ultralight, tight tracking */
+.text-display {
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: var(--font-weight-display);
+}
+
+.text-heading-lg {
+  font-size: var(--text-heading-lg);
+  line-height: var(--leading-heading-lg);
+  letter-spacing: var(--tracking-heading-lg);
+  font-weight: var(--font-weight-display);
+}
+
+/* Focus states */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-orange-primary);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-mist);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-fog);
 }
