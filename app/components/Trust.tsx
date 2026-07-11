@@ -71,39 +71,42 @@ export default function Trust() {
           </div>
 
           {/* Stats panel */}
-          <div className="rounded-[24px] border border-[#e4e4e7] bg-white p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] md:p-8">
-            <div className="grid grid-cols-2 gap-6">
+          <div className="rounded-[28px] border border-[#e4e4e7] bg-white p-7 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.12)] md:p-10">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:gap-x-6 sm:gap-y-8">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="flex items-center justify-center gap-1.5 text-[30px] font-semibold leading-none text-[#222325] md:text-[36px]">
+                  <div className="flex items-center justify-center gap-1.5 text-[34px] font-semibold leading-none tracking-tight text-[#222325] md:text-[40px]">
                     {stat.value}
                     {stat.suffix && (
-                      <span className="text-xl text-[#f97316]">{stat.suffix}</span>
+                      <span className="text-2xl text-[#f97316]">{stat.suffix}</span>
                     )}
                   </div>
-                  <p className="mt-2 text-[13px] text-[#62646a]">{stat.label}</p>
+                  <p className="mt-2.5 text-[14px] text-[#62646a]">{stat.label}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 border-t border-[#e4e4e7] pt-6">
-              <div className="flex items-start gap-3">
-                <div className="flex shrink-0 text-[#f97316]">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={16} />
-                  ))}
+            <div className="mt-8 border-t border-[#e4e4e7] pt-8">
+              <div className="rounded-[20px] bg-[#fafafa] p-5 md:p-6">
+                <div className="flex items-center gap-2">
+                  <div className="flex text-[#f97316]">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={18} />
+                    ))}
+                  </div>
+                  <span className="text-[15px] font-semibold text-[#222325]">4.9</span>
                 </div>
-                <p className="text-[15px] leading-[1.6] text-[#62646a]">
+                <p className="mt-3 text-[16px] leading-[1.65] text-[#62646a]">
                   &quot;Quick diagnosis and clean work. The plumber arrived on time and the estimate was fair. Would recommend.&quot;
                 </p>
-              </div>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f97316] text-[13px] font-bold text-white">
-                  SR
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#222325]">Sneha Rao</p>
-                  <p className="text-xs text-[#74767e]">Bangalore</p>
+                <div className="mt-5 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f97316] text-[14px] font-bold text-white">
+                    SR
+                  </div>
+                  <div>
+                    <p className="text-[15px] font-semibold text-[#222325]">Sneha Rao</p>
+                    <p className="text-[13px] text-[#74767e]">Bangalore</p>
+                  </div>
                 </div>
               </div>
             </div>
