@@ -71,7 +71,7 @@ export default function Trust() {
           </div>
 
           {/* Stats panel */}
-          <div className="rounded-[24px] border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+          <div className="rounded-[24px] border border-white/10 bg-white/5 px-6 py-8 backdrop-blur-sm md:px-10 lg:px-12">
             <div className="grid grid-cols-2 gap-8">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
