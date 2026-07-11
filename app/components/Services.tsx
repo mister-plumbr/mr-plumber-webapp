@@ -1,80 +1,95 @@
 import Link from "next/link";
-import Icon from "./Icon";
+import { ArrowRight, Droplets, Tool, Wrench, Home, Calendar, ShieldCheck } from "./icons";
 
 const services = [
-  { icon: "faucet", title: "Tap Repair", description: "Dripping or leaking taps repaired or replaced with premium fixtures.", price: "Starts at ₹499" },
-  { icon: "water_damage", title: "Pipe Leak", description: "Fast emergency response to prevent water damage to your property.", price: "Starts at ₹899" },
-  { icon: "shower", title: "Shower Install", description: "Full installation and pressure testing for modern bathroom systems.", price: "Starts at ₹1,499" },
-  { icon: "tablet", title: "Toilet Repair", description: "Resolving flush issues, blockages, and leaks with durable parts.", price: "Starts at ₹699" },
-  { icon: "hot_tub", title: "Water Heaters", description: "Diagnosis, descaling, and installation of electric or gas heaters.", price: "Starts at ₹999" },
-  { icon: "cleaning_services", title: "Drain Cleaning", description: "Professional high-pressure jetting to clear stubborn blockages.", price: "Starts at ₹599" },
+  {
+    title: "Tap & Faucet Repair",
+    description: "Dripping taps, loose handles, cartridge & washer replacement.",
+    icon: Droplets,
+    color: "bg-blue-50 text-blue-600",
+  },
+  {
+    title: "Pipe Leak & Burst",
+    description: "Visible leaks, burst pipes, joint sealing, pipe replacement.",
+    icon: Tool,
+    color: "bg-red-50 text-red-600",
+  },
+  {
+    title: "Drain Cleaning",
+    description: "Clogged sinks, slow drains, kitchen grease blocks.",
+    icon: Wrench,
+    color: "bg-emerald-50 text-emerald-600",
+  },
+  {
+    title: "Toilet Repair",
+    description: "Flush issues, tank leaks, seat fitting, blockage removal.",
+    icon: Home,
+    color: "bg-purple-50 text-purple-600",
+  },
+  {
+    title: "Water Heater",
+    description: "Geyser installation, thermostat fixes, leak repair.",
+    icon: Calendar,
+    color: "bg-amber-50 text-amber-600",
+  },
+  {
+    title: "Bathroom Fittings",
+    description: "Shower installs, mixer repair, silicone sealing.",
+    icon: ShieldCheck,
+    color: "bg-cyan-50 text-cyan-600",
+  },
 ];
 
 export default function Services() {
   return (
-    <>
-      {/* Desktop */}
-      <section id="services" className="hidden bg-surface-container-low py-16 lg:py-24 md:block">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <div className="mb-10 flex flex-col items-end justify-between gap-4 md:flex-row lg:mb-14">
-            <div>
-              <h2 className="mb-3 text-3xl font-semibold text-primary">Popular Services</h2>
-              <p className="max-w-md text-on-surface-variant">
-                Professional solutions for every plumbing need, priced transparently.
-              </p>
-            </div>
-            <Link href="/upload" className="flex items-center gap-1 font-bold text-secondary hover:underline">
-              View all services
-              <Icon name="chevron_right" size={20} />
-            </Link>
+    <section className="bg-[#fafafa] py-20 sm:py-28">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">
+              Services
+            </span>
+            <h2 className="mt-3 text-heading-lg text-[#222325]">
+              Popular services
+            </h2>
+            <p className="mt-2 text-[16px] text-[#62646a]">
+              Most booked plumbing jobs this week
+            </p>
           </div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <div
-                key={service.title}
-                className="hover-lift rounded-xl border border-border-subtle bg-surface-card p-6"
-              >
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-surface-container-high text-primary">
-                  <Icon name={service.icon} size={32} />
-                </div>
-                <h3 className="mb-2 text-xl font-semibold text-primary">{service.title}</h3>
-                <p className="mb-6 text-base text-on-surface-variant">{service.description}</p>
-                <Link
-                  href="/upload"
-                  className="block w-full rounded-full border-2 border-primary py-2 text-center text-sm font-bold text-primary transition-all hover:bg-primary hover:text-on-primary"
-                >
-                  Book Now
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile */}
-      <section className="px-6 py-16 md:hidden">
-        <div className="mb-8 flex items-end justify-between">
-          <h2 className="text-2xl font-semibold text-primary">Popular Services</h2>
-          <Link href="/upload" className="text-sm font-bold text-secondary">
-            View All
+          <Link
+            href="/upload"
+            className="inline-flex items-center gap-1 text-[15px] font-semibold text-[#f97316] hover:text-[#ea580c]"
+          >
+            View all services <ArrowRight size={16} />
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          {services.slice(0, 4).map((service) => (
-            <div
+
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((service) => (
+            <Link
               key={service.title}
-              className="flex flex-col items-center rounded-2xl border border-border-subtle bg-white p-6 text-center shadow-sm"
+              href="/upload"
+              className="group relative flex flex-col rounded-[20px] bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.1)]"
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-surface-container text-secondary">
-                <Icon name={service.icon} size={24} />
+              <div className={`flex h-14 w-14 items-center justify-center rounded-[14px] ${service.color} transition-transform group-hover:scale-110`}>
+                <service.icon size={28} />
               </div>
-              <h3 className="mb-1 text-sm font-bold text-primary">{service.title}</h3>
-              <p className="text-xs text-on-surface-variant">{service.price}</p>
-            </div>
+              
+              <h3 className="mt-5 text-[18px] font-semibold text-[#222325]">
+                {service.title}
+              </h3>
+              <p className="mt-2 flex-1 text-[15px] leading-[1.6] text-[#62646a]">
+                {service.description}
+              </p>
+              
+              <div className="mt-5 flex items-center gap-2 text-[14px] font-semibold text-[#f97316]">
+                Book now
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
           ))}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
