@@ -1,5 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { connectToDatabase } from "@/lib/mongodb";
+import { Booking } from "@/lib/models";
+
+function transformBooking(booking: any) {
+  const obj = booking.toObject ? booking.toObject() : booking;
+  return {
+    ...obj,
+    id: obj._id.toString(),
+    userId: obj.userId?._id?.toString() || obj.userId?.toString(),
+    plumberId: obj.plumberId?._id?.toString() || obj.plumberId?.toString(),
+    user: obj.userId && typeof obj.userId === "object"
+      ? {
+          id: obj.userId._id?.toString(),
+          firstName: obj.userId.firstName,
+          lastName: obj.userId.lastName,
+          phone: obj.userId.phone,
+          email: obj.userId.email,
+        }
+      : undefined,
+    plumber: obj.plumberId && typeof obj.plumberId === "object"
+      ? {
+          id: obj.plumberId._id?.toString(),
+          name: obj.plumberId.name,
+          phone: obj.plumberId.phone,
+          rating: obj.plumberId.rating,
+          jobsCompleted: obj.plumberId.jobsCompleted,
+          initials: obj.plumberId.initials,
+          location: obj.plumberId.location,
+        }
+      : undefined,
+  };
+}
 import { getAuthUser } from "@/lib/auth";
 import { z } from "zod";
 
@@ -16,6 +47,7 @@ const invoiceSchema = z.object({
 
 export async function POST(request: NextRequest, { params }: Params) {
   try {
+    await connectToDatabase();
     const auth = await getAuthUser();
 
     if (!auth || auth.role !== "PLUMBER") {
@@ -39,31 +71,30 @@ export async function POST(request: NextRequest, { params }: Params) {
     const tax = Math.round(subtotal * (taxPercent / 100));
     const total = subtotal + tax;
 
-    const invoice = await prisma.invoice.upsert({
-      where: { bookingId: id },
-      update: {
-        labour,
-        travel,
-        parts: JSON.stringify(parts),
-        tax,
-        total,
+    const booking = await Booking.findOneAndUpdate(
+      { requestId: id },
+      {
+        status: "PAYMENT_PENDING",
+        invoice: {
+          labour,
+          travel,
+          parts,
+          tax,
+          total,
+          isPaid: false,
+        },
       },
-      create: {
-        bookingId: id,
-        labour,
-        travel,
-        parts: JSON.stringify(parts),
-        tax,
-        total,
-      },
-    });
+      { new: true }
+    );
 
-    await prisma.booking.update({
-      where: { id },
-      data: { status: "PAYMENT_PENDING" },
-    });
+    if (!booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
 
-    return NextResponse.json({ invoice });
+    await booking.populate("userId", "firstName lastName phone email");
+    await booking.populate("plumberId", "name phone rating jobsCompleted initials location");
+
+    return NextResponse.json({ invoice: booking.invoice, booking: transformBooking(booking) });
   } catch (error) {
     console.error("Invoice error:", error);
     return NextResponse.json(

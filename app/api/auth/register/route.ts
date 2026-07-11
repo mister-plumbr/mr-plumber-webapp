@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { connectToDatabase } from "@/lib/mongodb";
+import { User } from "@/lib/models";
 import { hashPassword, signToken, setAuthCookie } from "@/lib/auth";
 import { registerSchema } from "@/lib/validation";
+import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
+    await connectToDatabase();
     const body = await request.json();
     const parsed = registerSchema.safeParse(body);
 
@@ -17,9 +20,7 @@ export async function POST(request: NextRequest) {
 
     const { firstName, lastName, email, phone, password } = parsed.data;
 
-    const existing = await prisma.user.findFirst({
-      where: { OR: [{ email }, { phone }] },
-    });
+    const existing = await User.findOne({ $or: [{ email }, { phone }] });
 
     if (existing) {
       return NextResponse.json(
@@ -30,33 +31,36 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await hashPassword(password);
 
-    const user = await prisma.user.create({
-      data: {
-        firstName,
-        lastName,
-        email,
-        phone,
-        password: hashedPassword,
-        role: "CUSTOMER",
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        role: true,
-      },
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      phone,
+      password: hashedPassword,
+      role: "CUSTOMER",
     });
 
     const token = signToken({
-      userId: user.id,
+      userId: user._id.toString(),
       email: user.email,
       role: user.role,
     });
 
     await setAuthCookie(token);
 
-    return NextResponse.json({ user, token }, { status: 201 });
+    return NextResponse.json(
+      {
+        user: {
+          id: user._id.toString(),
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        },
+        token,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Register error:", error);
     return NextResponse.json(

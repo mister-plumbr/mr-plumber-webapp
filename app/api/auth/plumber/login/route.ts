@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { connectToDatabase } from "@/lib/mongodb";
+import { Plumber } from "@/lib/models";
 import { verifyPassword, signToken, setAuthCookie } from "@/lib/auth";
 import { z } from "zod";
 
@@ -10,6 +11,7 @@ const plumberLoginSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    await connectToDatabase();
     const body = await request.json();
     const parsed = plumberLoginSchema.safeParse(body);
 
@@ -22,9 +24,7 @@ export async function POST(request: NextRequest) {
 
     const { phone, pin } = parsed.data;
 
-    const plumber = await prisma.plumber.findUnique({
-      where: { phone },
-    });
+    const plumber = await Plumber.findOne({ phone });
 
     if (!plumber) {
       return NextResponse.json(
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     const token = signToken({
-      userId: plumber.id,
+      userId: plumber._id.toString(),
       email: plumber.email,
       role: "PLUMBER",
     });
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       plumber: {
-        id: plumber.id,
+        id: plumber._id.toString(),
         name: plumber.name,
         phone: plumber.phone,
         rating: plumber.rating,

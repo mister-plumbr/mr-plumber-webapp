@@ -1,13 +1,45 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { connectToDatabase } from "@/lib/mongodb";
+import { Booking } from "@/lib/models";
 import { getAuthUser } from "@/lib/auth";
 
 interface Params {
   params: Promise<{ id: string }>;
 }
 
+function transformBooking(booking: any) {
+  const obj = booking.toObject ? booking.toObject() : booking;
+  return {
+    ...obj,
+    id: obj._id.toString(),
+    userId: obj.userId?._id?.toString() || obj.userId?.toString(),
+    plumberId: obj.plumberId?._id?.toString() || obj.plumberId?.toString(),
+    user: obj.userId && typeof obj.userId === "object"
+      ? {
+          id: obj.userId._id?.toString(),
+          firstName: obj.userId.firstName,
+          lastName: obj.userId.lastName,
+          phone: obj.userId.phone,
+          email: obj.userId.email,
+        }
+      : undefined,
+    plumber: obj.plumberId && typeof obj.plumberId === "object"
+      ? {
+          id: obj.plumberId._id?.toString(),
+          name: obj.plumberId.name,
+          phone: obj.plumberId.phone,
+          rating: obj.plumberId.rating,
+          jobsCompleted: obj.plumberId.jobsCompleted,
+          initials: obj.plumberId.initials,
+          location: obj.plumberId.location,
+        }
+      : undefined,
+  };
+}
+
 export async function GET(_request: Request, { params }: Params) {
   try {
+    await connectToDatabase();
     const auth = await getAuthUser();
 
     if (!auth) {
@@ -16,40 +48,19 @@ export async function GET(_request: Request, { params }: Params) {
 
     const { id } = await params;
 
-    const booking = await prisma.booking.findUnique({
-      where: { id },
-      include: {
-        user: {
-          select: { firstName: true, lastName: true, phone: true, email: true },
-        },
-        plumber: {
-          select: {
-            id: true,
-            name: true,
-            phone: true,
-            rating: true,
-            jobsCompleted: true,
-            initials: true,
-            location: true,
-          },
-        },
-        estimate: true,
-        invoice: true,
-        review: true,
-        notes: { orderBy: { createdAt: "desc" } },
-        photos: true,
-      },
-    });
+    const booking = await Booking.findOne({ requestId: id })
+      .populate("userId", "firstName lastName phone email")
+      .populate("plumberId", "name phone rating jobsCompleted initials location");
 
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    if (auth.role === "CUSTOMER" && booking.userId !== auth.userId) {
+    if (auth.role === "CUSTOMER" && booking.userId.toString() !== auth.userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    return NextResponse.json({ booking });
+    return NextResponse.json({ booking: transformBooking(booking) });
   } catch (error) {
     console.error("Get booking error:", error);
     return NextResponse.json(

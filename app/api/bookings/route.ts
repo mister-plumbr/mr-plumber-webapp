@@ -1,49 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { connectToDatabase } from "@/lib/mongodb";
+import { Booking, User } from "@/lib/models";
 import { getAuthUser } from "@/lib/auth";
 import { createBookingSchema } from "@/lib/validation";
+import crypto from "crypto";
+
+function transformBooking(booking: any) {
+  const obj = booking.toObject ? booking.toObject() : booking;
+  return {
+    ...obj,
+    id: obj._id.toString(),
+    userId: obj.userId?._id?.toString() || obj.userId?.toString(),
+    plumberId: obj.plumberId?._id?.toString() || obj.plumberId?.toString(),
+    user: obj.userId && typeof obj.userId === "object"
+      ? {
+          id: obj.userId._id?.toString(),
+          firstName: obj.userId.firstName,
+          lastName: obj.userId.lastName,
+          phone: obj.userId.phone,
+          email: obj.userId.email,
+        }
+      : undefined,
+    plumber: obj.plumberId && typeof obj.plumberId === "object"
+      ? {
+          id: obj.plumberId._id?.toString(),
+          name: obj.plumberId.name,
+          phone: obj.plumberId.phone,
+          rating: obj.plumberId.rating,
+          jobsCompleted: obj.plumberId.jobsCompleted,
+          initials: obj.plumberId.initials,
+          location: obj.plumberId.location,
+        }
+      : undefined,
+  };
+}
 
 export async function GET() {
   try {
+    await connectToDatabase();
     const auth = await getAuthUser();
 
     if (!auth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let where = {};
+    let query = {};
     if (auth.role === "CUSTOMER") {
-      where = { userId: auth.userId };
+      query = { userId: auth.userId };
     } else if (auth.role === "PLUMBER") {
-      where = { plumberId: auth.userId };
+      query = { plumberId: auth.userId };
     }
 
-    const bookings = await prisma.booking.findMany({
-      where,
-      include: {
-        user: {
-          select: { firstName: true, lastName: true, phone: true, email: true },
-        },
-        plumber: {
-          select: {
-            id: true,
-            name: true,
-            phone: true,
-            rating: true,
-            jobsCompleted: true,
-            initials: true,
-            location: true,
-          },
-        },
-        estimate: true,
-        invoice: true,
-        review: true,
-        notes: { orderBy: { createdAt: "desc" }, take: 1 },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const bookings = await Booking.find(query)
+      .populate("userId", "firstName lastName phone email")
+      .populate("plumberId", "name phone rating jobsCompleted initials location")
+      .sort({ createdAt: -1 });
 
-    return NextResponse.json({ bookings });
+    return NextResponse.json({ bookings: bookings.map(transformBooking) });
   } catch (error) {
     console.error("Get bookings error:", error);
     return NextResponse.json(
@@ -55,16 +68,14 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    await connectToDatabase();
     const auth = await getAuthUser();
 
-    // Allow unauthenticated uploads for MVP, but attach to demo user if not logged in
     let userId = auth?.userId;
 
     if (!userId) {
-      const demoUser = await prisma.user.findUnique({
-        where: { email: "rahul@example.com" },
-      });
-      userId = demoUser?.id;
+      const demoUser = await User.findOne({ email: "rahul@example.com" });
+      userId = demoUser?._id.toString();
     }
 
     if (!userId) {
@@ -94,20 +105,19 @@ export async function POST(request: NextRequest) {
       preferredTime,
     } = parsed.data;
 
-    const booking = await prisma.booking.create({
-      data: {
-        title,
-        category,
-        description,
-        address,
-        landmark,
-        isEmergency,
-        preferredTime: preferredTime ? new Date(preferredTime) : null,
-        userId,
-      },
+    const booking = await Booking.create({
+      requestId: `MP-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
+      title,
+      category,
+      description,
+      address,
+      landmark,
+      isEmergency,
+      preferredTime: preferredTime ? new Date(preferredTime) : null,
+      userId,
     });
 
-    return NextResponse.json({ booking }, { status: 201 });
+    return NextResponse.json({ booking: transformBooking(booking) }, { status: 201 });
   } catch (error) {
     console.error("Create booking error:", error);
     return NextResponse.json(

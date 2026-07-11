@@ -1,29 +1,22 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { connectToDatabase } from "@/lib/mongodb";
+import { Plumber } from "@/lib/models";
 import { getAuthUser } from "@/lib/auth";
 
 export async function GET() {
   try {
+    await connectToDatabase();
     const auth = await getAuthUser();
 
     if (!auth || (auth.role !== "OPERATIONS" && auth.role !== "ADMIN")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const plumbers = await prisma.plumber.findMany({
-      where: { isVerified: true },
-      select: {
-        id: true,
-        name: true,
-        phone: true,
-        rating: true,
-        jobsCompleted: true,
-        initials: true,
-        location: true,
-        isAvailable: true,
-      },
-      orderBy: { rating: "desc" },
-    });
+    const plumbers = await Plumber.find({ isVerified: true })
+      .select(
+        "id name phone rating jobsCompleted initials location isAvailable"
+      )
+      .sort({ rating: -1 });
 
     return NextResponse.json({ plumbers });
   } catch (error) {
