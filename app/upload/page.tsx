@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { UploadCloud, X, ArrowRight } from "../components/icons";
@@ -21,20 +22,20 @@ const categories = [
 const propertyTypes = ["Apartment", "Independent house", "Villa", "Commercial"];
 
 export default function UploadPage() {
+  const router = useRouter();
   const [images, setImages] = useState<string[]>([]);
   const [video, setVideo] = useState<string | null>(null);
   const [isEmergency, setIsEmergency] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleImageUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
       if (!files) return;
-
       const remainingSlots = 10 - images.length;
-      const toAdd = Math.min(files.length, remainingSlots);
-
       Array.from(files)
-        .slice(0, toAdd)
+        .slice(0, remainingSlots)
         .forEach((file) => {
           const url = URL.createObjectURL(file);
           setImages((prev) => [...prev, url]);
@@ -61,6 +62,49 @@ export default function UploadPage() {
     setVideo(null);
   }, []);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const category = formData.get("category") as string;
+    const description = formData.get("description") as string;
+    const address = formData.get("address") as string;
+    const landmark = formData.get("landmark") as string;
+    const preferredTime = formData.get("preferredTime") as string;
+
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: category,
+          category,
+          description,
+          address,
+          landmark,
+          isEmergency,
+          preferredTime: preferredTime ? new Date(preferredTime).toISOString() : undefined,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to submit request");
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -82,7 +126,13 @@ export default function UploadPage() {
             </p>
           </div>
 
-          <form className="grid gap-8 lg:grid-cols-[1fr_360px]">
+          {error && (
+            <div className="mb-6 rounded-[8px] bg-red-50 px-4 py-3 text-[14px] text-red-600">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1fr_360px]">
             {/* Main Form */}
             <div className="space-y-6">
               {/* Category */}
@@ -91,6 +141,7 @@ export default function UploadPage() {
                   Issue category
                 </label>
                 <select
+                  name="category"
                   required
                   className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325]"
                 >
@@ -109,6 +160,7 @@ export default function UploadPage() {
                   Describe the issue
                 </label>
                 <textarea
+                  name="description"
                   required
                   rows={4}
                   placeholder="e.g. Kitchen tap has been dripping for 2 days and water pressure is low..."
@@ -147,6 +199,7 @@ export default function UploadPage() {
                   </label>
                   <input
                     type="text"
+                    name="address"
                     required
                     placeholder="Full address"
                     className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
@@ -158,6 +211,7 @@ export default function UploadPage() {
                   </label>
                   <input
                     type="text"
+                    name="landmark"
                     placeholder="Nearby landmark"
                     className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
                   />
@@ -172,6 +226,7 @@ export default function UploadPage() {
                   </label>
                   <input
                     type="datetime-local"
+                    name="preferredTime"
                     className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325]"
                   />
                 </div>
@@ -181,6 +236,7 @@ export default function UploadPage() {
                   </label>
                   <input
                     type="tel"
+                    name="phone"
                     required
                     placeholder="+91 98765 43210"
                     className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
@@ -303,10 +359,11 @@ export default function UploadPage() {
               {/* Submit */}
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-[8px] bg-[#222325] px-6 py-3.5 text-[16px] font-semibold text-white hover:bg-[#111] transition-colors"
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-2 rounded-[8px] bg-[#222325] px-6 py-3.5 text-[16px] font-semibold text-white hover:bg-[#111] disabled:opacity-60 transition-colors"
               >
-                Submit request
-                <ArrowRight size={18} />
+                {loading ? "Submitting..." : "Submit request"}
+                {!loading && <ArrowRight size={18} />}
               </button>
 
               <p className="text-center text-[12px] text-[#74767e]">

@@ -1,7 +1,45 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Logo } from "../components/icons";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("rahul@example.com");
+  const [password, setPassword] = useState("password123");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-[#fff7ed]">
       <div className="flex h-16 items-center border-b border-[#dadbdd] bg-white px-4 sm:px-6 lg:px-8">
@@ -22,14 +60,22 @@ export default function LoginPage() {
             Track your requests, view estimates, and manage bookings.
           </p>
 
-          <form className="mt-8 space-y-5">
+          {error && (
+            <div className="mt-4 rounded-[8px] bg-red-50 px-4 py-2 text-[14px] text-red-600">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-5">
             <div>
               <label className="block text-[14px] font-semibold text-[#222325]">
-                Email or mobile number
+                Email
               </label>
               <input
-                type="text"
+                type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
               />
@@ -42,6 +88,8 @@ export default function LoginPage() {
               <input
                 type="password"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
               />
@@ -63,12 +111,13 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <Link
-              href="/dashboard"
-              className="flex w-full items-center justify-center rounded-[8px] bg-[#222325] px-6 py-3.5 text-[16px] font-semibold text-white hover:bg-[#111] transition-colors"
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full items-center justify-center rounded-[8px] bg-[#222325] px-6 py-3.5 text-[16px] font-semibold text-white hover:bg-[#111] disabled:opacity-60 transition-colors"
             >
-              Sign in
-            </Link>
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
           </form>
 
           <div className="mt-6 text-center text-[14px] text-[#62646a]">

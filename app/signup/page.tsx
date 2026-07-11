@@ -1,7 +1,54 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Logo } from "../components/icons";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Registration failed");
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-[#fff7ed]">
       <div className="flex h-16 items-center border-b border-[#dadbdd] bg-white px-4 sm:px-6 lg:px-8">
@@ -22,7 +69,13 @@ export default function SignupPage() {
             Join Mister Plumbr to book verified plumbers in minutes.
           </p>
 
-          <form className="mt-8 space-y-5">
+          {error && (
+            <div className="mt-4 rounded-[8px] bg-red-50 px-4 py-2 text-[14px] text-red-600">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-[14px] font-semibold text-[#222325]">
@@ -30,7 +83,10 @@ export default function SignupPage() {
                 </label>
                 <input
                   type="text"
+                  name="firstName"
                   required
+                  value={form.firstName}
+                  onChange={handleChange}
                   placeholder="Rahul"
                   className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
                 />
@@ -41,7 +97,10 @@ export default function SignupPage() {
                 </label>
                 <input
                   type="text"
+                  name="lastName"
                   required
+                  value={form.lastName}
+                  onChange={handleChange}
                   placeholder="Sharma"
                   className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
                 />
@@ -54,7 +113,10 @@ export default function SignupPage() {
               </label>
               <input
                 type="tel"
+                name="phone"
                 required
+                value={form.phone}
+                onChange={handleChange}
                 placeholder="+91 98765 43210"
                 className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
               />
@@ -66,7 +128,10 @@ export default function SignupPage() {
               </label>
               <input
                 type="email"
+                name="email"
                 required
+                value={form.email}
+                onChange={handleChange}
                 placeholder="you@example.com"
                 className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
               />
@@ -78,7 +143,10 @@ export default function SignupPage() {
               </label>
               <input
                 type="password"
+                name="password"
                 required
+                value={form.password}
+                onChange={handleChange}
                 placeholder="••••••••"
                 className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] bg-white px-4 py-3 text-[16px] text-[#222325] placeholder:text-[#74767e]"
               />
@@ -100,12 +168,13 @@ export default function SignupPage() {
               </Link>
             </label>
 
-            <Link
-              href="/dashboard"
-              className="flex w-full items-center justify-center rounded-[8px] bg-[#222325] px-6 py-3.5 text-[16px] font-semibold text-white hover:bg-[#111] transition-colors"
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full items-center justify-center rounded-[8px] bg-[#222325] px-6 py-3.5 text-[16px] font-semibold text-white hover:bg-[#111] disabled:opacity-60 transition-colors"
             >
-              Create account
-            </Link>
+              {loading ? "Creating account..." : "Create account"}
+            </button>
           </form>
 
           <div className="mt-6 text-center text-[14px] text-[#62646a]">

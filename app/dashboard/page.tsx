@@ -1,23 +1,209 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Sidebar from "./components/Sidebar";
 import BookingCard from "./components/BookingCard";
 import {
-  bookings,
   Booking,
   formatDateTime,
   formatCurrency,
   getStatusColor,
   getStatusProgress,
-  statusOrder,
 } from "@/lib/data";
 
+interface ApiBooking {
+  id: string;
+  requestId: string;
+  title: string;
+  category: string;
+  description: string;
+  address: string;
+  landmark?: string;
+  isEmergency: boolean;
+  status: string;
+  createdAt: string;
+  preferredTime?: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+  };
+  plumber?: {
+    id: string;
+    name: string;
+    phone: string;
+    rating: number;
+    jobsCompleted: number;
+    initials: string;
+    location: string;
+  } | null;
+  estimate?: {
+    labour: number;
+    travel: number;
+    parts: string;
+    min: number;
+    max: number;
+    notes?: string | null;
+    expiresAt: string;
+  } | null;
+  invoice?: {
+    labour: number;
+    travel: number;
+    parts: string;
+    tax: number;
+    total: number;
+    isPaid: boolean;
+  } | null;
+  review?: {
+    rating: number;
+    comment?: string | null;
+  } | null;
+  notes: { content: string }[];
+}
+
+function mapApiToBooking(api: ApiBooking): Booking {
+  const parts = api.estimate?.parts
+    ? (JSON.parse(api.estimate.parts) as { name: string; cost: number }[])
+    : [];
+
+  return {
+    id: api.requestId,
+    customerName: `${api.user.firstName} ${api.user.lastName}`,
+    customerPhone: api.user.phone,
+    title: api.title,
+    category: api.category,
+    description: api.description,
+    address: api.address,
+    landmark: api.landmark ?? undefined,
+    isEmergency: api.isEmergency,
+    status: api.status.replace(/_/g, " ") as Booking["status"],
+    createdAt: api.createdAt,
+    preferredTime: api.preferredTime,
+    photos: [],
+    internalNotes: api.notes[0]?.content,
+    estimate: api.estimate
+      ? {
+          range: { min: api.estimate.min, max: api.estimate.max },
+          notes: api.estimate.notes ?? "",
+          parts,
+          labour: api.estimate.labour,
+          travel: api.estimate.travel,
+          expiresAt: api.estimate.expiresAt,
+        }
+      : undefined,
+    plumber: api.plumber
+      ? {
+          id: api.plumber.id,
+          name: api.plumber.name,
+          phone: api.plumber.phone,
+          rating: api.plumber.rating,
+          jobsCompleted: api.plumber.jobsCompleted,
+          initials: api.plumber.initials,
+          location: api.plumber.location,
+        }
+      : undefined,
+    finalPrice: api.invoice?.total,
+    customerRating: api.review?.rating,
+    review: api.review?.comment ?? undefined,
+  };
+}
+
 export default function DashboardPage() {
-  const [selected, setSelected] = useState<Booking>(bookings[0]);
+  const router = useRouter();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [selected, setSelected] = useState<Booking | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function fetchBookings() {
+      try {
+        const res = await fetch("/api/bookings");
+        if (res.status === 401) {
+          router.push("/login");
+          return;
+        }
+        if (!res.ok) throw new Error("Failed to fetch bookings");
+        const data = (await res.json()) as { bookings: ApiBooking[] };
+        const mapped = data.bookings.map(mapApiToBooking);
+        setBookings(mapped);
+        setSelected(mapped[0] ?? null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBookings();
+  }, [router]);
+
+  const handleAcceptEstimate = async () => {
+    if (!selected) return;
+    const res = await fetch(`/api/bookings/${selected.id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "ESTIMATE_ACCEPTED" }),
+    });
+    if (res.ok) {
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.id === selected.id ? { ...b, status: "Estimate Accepted" } : b
+        )
+      );
+      setSelected((prev) =>
+        prev ? { ...prev, status: "Estimate Accepted" } : null
+      );
+    }
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <main className="flex flex-1 items-center justify-center bg-[#fff7ed]">
+          <p className="text-[#62646a]">Loading your requests...</p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <main className="flex flex-1 items-center justify-center bg-[#fff7ed]">
+          <p className="text-red-600">{error}</p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  if (!selected) {
+    return (
+      <>
+        <Navbar />
+        <main className="flex flex-1 items-center justify-center bg-[#fff7ed]">
+          <div className="text-center">
+            <p className="text-[#62646a]">No requests yet.</p>
+            <Link
+              href="/upload"
+              className="mt-4 inline-block rounded-[8px] bg-[#f97316] px-5 py-2.5 text-[14px] font-semibold text-white"
+            >
+              Submit a request
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -108,7 +294,9 @@ export default function DashboardPage() {
                     {selected.landmark && (
                       <div className="flex justify-between text-[14px]">
                         <span className="text-[#74767e]">Landmark</span>
-                        <span className="text-[#222325]">{selected.landmark}</span>
+                        <span className="text-[#222325]">
+                          {selected.landmark}
+                        </span>
                       </div>
                     )}
                     <div className="flex justify-between text-[14px]">
@@ -185,6 +373,7 @@ export default function DashboardPage() {
                       <div className="mt-6 flex gap-3">
                         <button
                           type="button"
+                          onClick={handleAcceptEstimate}
                           className="flex-1 rounded-[8px] bg-[#222325] px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-[#111] transition-colors"
                         >
                           Accept estimate
@@ -239,7 +428,9 @@ export default function DashboardPage() {
                   </h3>
                   <div className="mt-2 flex text-[#f97316]">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i}>{i < selected.customerRating! ? "★" : "☆"}</span>
+                      <span key={i}>
+                        {i < selected.customerRating! ? "★" : "☆"}
+                      </span>
                     ))}
                   </div>
                   {selected.review && (
