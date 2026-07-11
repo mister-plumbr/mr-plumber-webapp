@@ -9,10 +9,10 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#dadbdd] bg-white/95 backdrop-blur-sm">
-      <nav className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:px-6 md:h-20 lg:px-8">
+      <nav className="mx-auto flex h-[72px] max-w-[1200px] items-center justify-between px-4 py-3 sm:px-6 md:h-[88px] lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <Logo size={32} />
+          <Logo size={36} />
           <span className="text-[20px] font-semibold tracking-tight text-[#222325]">
             mister plumbr
             <span className="text-[#f97316]">.</span>
@@ -25,9 +25,9 @@ export default function Navbar() {
             <input
               type="text"
               placeholder="Search plumbing services..."
-              className="flex-1 border-0 bg-transparent px-4 py-2.5 text-[14px] text-[#222325] placeholder:text-[#74767e] focus:ring-0"
+              className="flex-1 border-0 bg-transparent px-4 py-2 text-[14px] text-[#222325] placeholder:text-[#74767e] focus:ring-0"
             />
-            <button className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#222325] text-white m-1 hover:bg-[#111] transition-colors">
+            <button className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[#222325] text-white m-1 hover:bg-[#111] transition-colors">
               <Search size={18} />
             </button>
           </div>
@@ -67,7 +67,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 border-b border-[#dadbdd] bg-white shadow-lg">
+        <div className="md:hidden absolute top-[72px] left-0 right-0 border-b border-[#dadbdd] bg-white shadow-lg">
           <div className="mx-auto max-w-[1200px] px-4 py-4 flex flex-col gap-2">
             <div className="flex w-full items-center overflow-hidden rounded-[12px] border border-[#dadbdd] bg-white mb-2">
               <input
