@@ -117,7 +117,7 @@ export default function Hero() {
               </div>
 
               {/* Floating badge */}
-              <div className="absolute -right-6 top-12 rounded-[16px] bg-[#222325] p-4 shadow-xl">
+              <div className="absolute -right-6 top-12 rounded-[16px] bg-[#222325] px-5 py-4 shadow-xl">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f97316] text-white text-[14px] font-bold">
                     RK
@@ -130,18 +130,18 @@ export default function Hero() {
               </div>
 
               {/* Floating stat */}
-              <div className="absolute -left-8 bottom-16 rounded-[16px] bg-white p-4 shadow-xl">
+              <div className="absolute -left-8 bottom-16 rounded-[16px] bg-white px-5 py-4 shadow-xl">
                 <div className="flex items-center gap-2">
                   <div className="flex text-[#f97316]">
                     {[...Array(5)].map((_, i) => (
-                      <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                       </svg>
                     ))}
                   </div>
-                  <span className="text-[14px] font-semibold text-[#222325]">4.9</span>
+                  <span className="text-[15px] font-semibold text-[#222325]">4.9</span>
                 </div>
-                <p className="text-[11px] text-[#74767e]">from 2,000+ reviews</p>
+                <p className="text-[12px] text-[#74767e]">from 2,000+ reviews</p>
               </div>
             </div>
           </div>
