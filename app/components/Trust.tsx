@@ -87,7 +87,7 @@ export default function Trust() {
             </div>
 
             <div className="mt-8 border-t border-[#e4e4e7] pt-8">
-              <div className="rounded-[20px] bg-[#fafafa] p-5 md:p-6">
+              <div className="rounded-[20px] bg-[#fafafa] px-6 py-5 md:px-8 md:py-6">
                 <div className="flex items-center gap-2">
                   <div className="flex text-[#f97316]">
                     {[...Array(5)].map((_, i) => (
