@@ -35,16 +35,16 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-white py-20 sm:py-28">
+    <section id="how-it-works" className="bg-white py-16 sm:py-20 md:py-28">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">
             How it works
           </span>
-          <h2 className="mt-3 text-heading-lg text-[#222325]">
+          <h2 className="mt-3 text-3xl font-medium leading-tight tracking-tight text-[#222325] md:text-heading-lg">
             From leak to fixed, simply.
           </h2>
-          <p className="mt-4 text-[18px] leading-[1.6] text-[#62646a]">
+          <p className="mt-4 text-base leading-[1.6] text-[#62646a] md:text-[18px]">
             No hidden charges. No surprise visits. Just real plumbers reviewing your
             issue and giving you an honest quote.
           </p>

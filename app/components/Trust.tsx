@@ -28,17 +28,17 @@ const stats = [
 
 export default function Trust() {
   return (
-    <section className="bg-[#222325] py-20 sm:py-28">
+    <section className="bg-[#222325] py-16 sm:py-20 md:py-28">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
           <div>
             <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">
               Why Mister Plumbr
             </span>
-            <h2 className="mt-3 text-heading-lg text-white">
+            <h2 className="mt-3 text-3xl font-medium leading-tight tracking-tight text-white md:text-heading-lg">
               Why homeowners trust us
             </h2>
-            <p className="mt-4 text-[17px] leading-[1.7] text-[#dadbdd]">
+            <p className="mt-4 text-base leading-[1.7] text-[#dadbdd] md:text-[17px]">
               We combine expert human review with verified local plumbers so you
               get the right fix at the right price — every time.
             </p>

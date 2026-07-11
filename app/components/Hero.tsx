@@ -32,7 +32,7 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1200px] px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-32">
+      <div className="relative mx-auto max-w-[1200px] px-4 py-16 sm:px-6 sm:py-20 md:py-28 lg:px-8 lg:py-32">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Left content */}
           <div className="max-w-2xl">
@@ -41,7 +41,7 @@ export default function Hero() {
               Now serving Bangalore
             </div>
 
-            <h1 className="mt-6 text-display text-white">
+            <h1 className="mt-6 text-4xl font-extralight leading-[1.05] tracking-tight text-white md:text-5xl lg:text-display">
               Plumbing fixed
               <br />
               <span className="text-[#f97316]">without the guesswork.</span>
@@ -148,7 +148,7 @@ export default function Hero() {
         </div>
 
         {/* Quick tags */}
-        <div className="mt-16 flex flex-wrap items-center gap-3 border-t border-white/10 pt-8">
+        <div className="mt-12 flex flex-wrap items-center gap-3 border-t border-white/10 pt-6 md:mt-16 md:pt-8">
           <span className="text-[14px] text-[#74767e]">Popular:</span>
           {quickTags.map((tag) => (
             <Link

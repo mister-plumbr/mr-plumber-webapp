@@ -42,17 +42,17 @@ const services = [
 
 export default function Services() {
   return (
-    <section className="bg-[#fafafa] py-20 sm:py-28">
+    <section className="bg-[#fafafa] py-16 sm:py-20 md:py-28">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">
               Services
             </span>
-            <h2 className="mt-3 text-heading-lg text-[#222325]">
+            <h2 className="mt-3 text-3xl font-medium leading-tight tracking-tight text-[#222325] md:text-heading-lg">
               Popular services
             </h2>
-            <p className="mt-2 text-[16px] text-[#62646a]">
+            <p className="mt-2 text-[15px] text-[#62646a] md:text-[16px]">
               Most booked plumbing jobs this week
             </p>
           </div>
