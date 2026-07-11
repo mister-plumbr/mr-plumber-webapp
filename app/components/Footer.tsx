@@ -3,16 +3,34 @@ import { Logo } from "./icons";
 
 const footerLinks = {
   Services: [
-    "Tap Repair",
-    "Pipe Leak",
-    "Drain Cleaning",
-    "Toilet Repair",
-    "Water Heater",
-    "Bathroom Fitting",
+    { label: "Tap Repair", href: "/services/tap-repair" },
+    { label: "Pipe Leak", href: "/services/pipe-leak" },
+    { label: "Drain Cleaning", href: "/services/drain-cleaning" },
+    { label: "Toilet Repair", href: "/services/toilet-repair" },
+    { label: "Water Heater", href: "/services/water-heater" },
+    { label: "Bathroom Fitting", href: "/services/bathroom-fitting" },
   ],
-  Company: ["About us", "How it works", "Careers", "Press", "Contact"],
-  Support: ["Help Center", "Safety", "Cancellation", "Complaints", "FAQs"],
+  Company: [
+    { label: "About us", href: "/about" },
+    { label: "How it works", href: "/how-it-works" },
+    { label: "Careers", href: "/careers" },
+    { label: "Press", href: "/press" },
+    { label: "Contact", href: "/contact" },
+  ],
+  Support: [
+    { label: "Help Center", href: "/help" },
+    { label: "Safety", href: "/safety" },
+    { label: "Cancellation", href: "/cancellation" },
+    { label: "Complaints", href: "/complaints" },
+    { label: "FAQs", href: "/faqs" },
+  ],
 };
+
+const legalLinks = [
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "Sitemap", href: "/sitemap" },
+];
 
 export default function Footer() {
   return (
@@ -32,17 +50,6 @@ export default function Footer() {
               Verified plumbers, transparent estimates, and human-reviewed
               service requests. Plumbing made simple for Indian homes.
             </p>
-            <div className="mt-6 flex gap-4">
-              {["Twitter", "Instagram", "LinkedIn"].map((social) => (
-                <a
-                  key={social}
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#dadbdd] text-[12px] font-semibold text-[#62646a] hover:border-[#f97316] hover:text-[#f97316] transition-colors"
-                >
-                  {social[0]}
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Links */}
@@ -53,12 +60,12 @@ export default function Footer() {
               </h4>
               <ul className="mt-5 flex flex-col gap-3">
                 {links.map((link) => (
-                  <li key={link}>
+                  <li key={link.href}>
                     <Link
-                      href="#"
+                      href={link.href}
                       className="text-[15px] text-[#62646a] hover:text-[#f97316] transition-colors"
                     >
-                      {link}
+                      {link.label}
                     </Link>
                   </li>
                 ))}
@@ -72,13 +79,13 @@ export default function Footer() {
             © {new Date().getFullYear()} Mister Plumbr. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            {["Privacy", "Terms", "Sitemap"].map((link) => (
+            {legalLinks.map((link) => (
               <Link
-                key={link}
-                href="#"
+                key={link.href}
+                href={link.href}
                 className="text-[14px] text-[#62646a] hover:text-[#f97316] transition-colors"
               >
-                {link}
+                {link.label}
               </Link>
             ))}
           </div>
