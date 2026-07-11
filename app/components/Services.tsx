@@ -69,7 +69,7 @@ export default function Services() {
             <Link
               key={service.title}
               href="/upload"
-              className="group relative flex flex-col rounded-[20px] bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.1)]"
+              className="group relative flex flex-col rounded-[20px] border border-[#e4e4e7] bg-white p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.12)]"
             >
               <div className={`flex h-14 w-14 items-center justify-center rounded-[14px] ${service.color} transition-transform group-hover:scale-110`}>
                 <service.icon size={28} />
