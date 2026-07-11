@@ -35,10 +35,10 @@ export default function Trust() {
             <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">
               Why Mister Plumbr
             </span>
-            <h2 className="mt-3 text-3xl font-medium leading-tight tracking-tight text-white md:text-heading-lg">
+            <h2 className="mt-3 text-2xl font-medium leading-tight tracking-tight text-white md:text-3xl">
               Why homeowners trust us
             </h2>
-            <p className="mt-4 text-base leading-[1.7] text-[#dadbdd] md:text-[17px]">
+            <p className="mt-4 text-[15px] leading-[1.7] text-[#dadbdd]">
               We combine expert human review with verified local plumbers so you
               get the right fix at the right price — every time.
             </p>
@@ -50,7 +50,7 @@ export default function Trust() {
                     <item.icon size={24} />
                   </div>
                   <div>
-                    <h3 className="text-[17px] font-semibold text-white">
+                    <h3 className="text-base font-semibold text-white">
                       {item.title}
                     </h3>
                     <p className="mt-1 text-[15px] leading-[1.6] text-[#dadbdd]">
@@ -63,47 +63,47 @@ export default function Trust() {
 
             <Link
               href="/upload"
-              className="group mt-10 inline-flex items-center gap-2 rounded-[8px] border border-white/20 bg-white/5 px-7 py-3.5 text-[15px] font-semibold text-white hover:bg-white/10 transition-colors"
+              className="group mt-10 inline-flex items-center gap-2 rounded-[8px] border border-white/20 bg-white/5 px-7 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-white/10"
             >
               Get your estimate
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
           {/* Stats panel */}
-          <div className="rounded-[24px] border border-white/10 bg-white/5 px-6 py-8 backdrop-blur-sm md:px-10 lg:px-12">
-            <div className="grid grid-cols-2 gap-8">
+          <div className="rounded-[24px] border border-[#e4e4e7] bg-white p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] md:p-8">
+            <div className="grid grid-cols-2 gap-6">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="flex items-center justify-center gap-2 text-[42px] font-semibold leading-none text-white sm:text-[48px]">
+                  <div className="flex items-center justify-center gap-1.5 text-[30px] font-semibold leading-none text-[#222325] md:text-[36px]">
                     {stat.value}
                     {stat.suffix && (
-                      <span className="text-[24px] text-[#f97316]">{stat.suffix}</span>
+                      <span className="text-xl text-[#f97316]">{stat.suffix}</span>
                     )}
                   </div>
-                  <p className="mt-2 text-[14px] text-[#dadbdd]">{stat.label}</p>
+                  <p className="mt-2 text-[13px] text-[#62646a]">{stat.label}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-8 border-t border-white/10 pt-8">
+            <div className="mt-6 border-t border-[#e4e4e7] pt-6">
               <div className="flex items-start gap-3">
-                <div className="flex text-[#f97316]">
+                <div className="flex shrink-0 text-[#f97316]">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={18} />
+                    <Star key={i} size={16} />
                   ))}
                 </div>
-                <p className="text-[15px] text-[#dadbdd]">
+                <p className="text-[15px] leading-[1.6] text-[#62646a]">
                   &quot;Quick diagnosis and clean work. The plumber arrived on time and the estimate was fair. Would recommend.&quot;
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f97316] text-[14px] font-bold text-white">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f97316] text-[13px] font-bold text-white">
                   SR
                 </div>
                 <div>
-                  <p className="text-[14px] font-semibold text-white">Sneha Rao</p>
-                  <p className="text-[12px] text-[#74767e]">Bangalore</p>
+                  <p className="text-sm font-semibold text-[#222325]">Sneha Rao</p>
+                  <p className="text-xs text-[#74767e]">Bangalore</p>
                 </div>
               </div>
             </div>
