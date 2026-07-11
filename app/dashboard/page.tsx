@@ -165,7 +165,7 @@ export default function DashboardPage() {
     return (
       <>
         <Navbar />
-        <main className="flex flex-1 items-center justify-center bg-[#fafafa]">
+        <main className="flex flex-1 items-center justify-center bg-[#fafafa] px-5">
           <p className="text-[#62646a]">Loading your requests...</p>
         </main>
         <Footer />
@@ -177,7 +177,7 @@ export default function DashboardPage() {
     return (
       <>
         <Navbar />
-        <main className="flex flex-1 items-center justify-center bg-[#fafafa]">
+        <main className="flex flex-1 items-center justify-center bg-[#fafafa] px-5">
           <p className="text-red-600">{error}</p>
         </main>
         <Footer />
@@ -189,7 +189,7 @@ export default function DashboardPage() {
     return (
       <>
         <Navbar />
-        <main className="flex flex-1 items-center justify-center bg-[#fafafa]">
+        <main className="flex flex-1 items-center justify-center bg-[#fafafa] px-5">
           <div className="text-center">
             <p className="text-[#62646a]">No requests yet.</p>
             <Link
@@ -215,7 +215,7 @@ export default function DashboardPage() {
 
         <div className="flex flex-1 flex-col lg:flex-row">
           {/* Requests List */}
-          <div className="w-full border-r border-[#e4e4e7] bg-white p-4 sm:p-5 lg:w-[380px] lg:shrink-0">
+          <div className="w-full border-r border-[#e4e4e7] bg-white p-5 sm:p-6 lg:w-[380px] lg:shrink-0">
             <div className="mb-5 flex items-center justify-between">
               <h1 className="text-[22px] font-semibold text-[#222325]">
                 My requests
@@ -241,7 +241,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Detail View */}
-          <div className="flex-1 p-4 sm:p-5 lg:p-7">
+          <div className="flex-1 p-5 sm:p-6 lg:p-7">
             <div className="rounded-[16px] border border-[#e4e4e7] bg-white p-5 shadow-sm sm:p-7">
               {/* Header */}
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

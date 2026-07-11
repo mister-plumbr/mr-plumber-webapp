@@ -100,7 +100,7 @@ export default function SignupPage() {
           </Link>
         </div>
 
-        <main className="flex flex-1 items-center justify-center px-4 py-12">
+        <main className="flex flex-1 items-center justify-center px-5 py-12">
           <div className="w-full max-w-[420px]">
             <h1 className="text-[32px] font-semibold tracking-tight text-[#222325]">
               Create your account

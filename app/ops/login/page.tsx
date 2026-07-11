@@ -4,7 +4,7 @@ import { Logo } from "../../components/icons";
 export default function OpsLoginPage() {
   return (
     <div className="flex min-h-screen flex-col bg-[#222325]">
-      <div className="flex h-16 items-center border-b border-white/10 bg-[#222325] px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 items-center border-b border-white/10 bg-[#222325] px-5 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
           <Logo size={32} />
           <span className="text-xl font-semibold tracking-tight text-white">
@@ -13,7 +13,7 @@ export default function OpsLoginPage() {
         </Link>
       </div>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
+      <main className="flex flex-1 items-center justify-center px-5 py-12">
         <div className="w-full max-w-md rounded-[16px] border border-white/10 bg-[#2a2b2d] p-8 shadow-sm">
           <div className="mb-2 inline-flex rounded-full bg-[#f97316]/10 px-3 py-1 text-[12px] font-semibold text-[#f97316]">
             Operations Portal

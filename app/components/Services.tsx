@@ -43,7 +43,7 @@ const services = [
 export default function Services() {
   return (
     <section className="bg-[#fafafa] py-16 sm:py-20 md:py-28">
-      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-8">
         <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">

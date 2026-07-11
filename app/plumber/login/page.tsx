@@ -42,7 +42,7 @@ export default function PlumberLoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#7c2d12]">
-      <div className="flex h-16 items-center border-b border-white/10 bg-[#7c2d12] px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 items-center border-b border-white/10 bg-[#7c2d12] px-5 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
           <Logo size={32} />
           <span className="text-xl font-semibold tracking-tight text-white">
@@ -51,7 +51,7 @@ export default function PlumberLoginPage() {
         </Link>
       </div>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
+      <main className="flex flex-1 items-center justify-center px-5 py-12">
         <div className="w-full max-w-md rounded-[16px] border border-white/10 bg-[#9a3412] p-8 shadow-sm">
           <div className="mb-2 inline-flex rounded-full bg-[#f97316]/20 px-3 py-1 text-[12px] font-semibold text-white">
             Technician App

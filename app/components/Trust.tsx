@@ -29,7 +29,7 @@ const stats = [
 export default function Trust() {
   return (
     <section className="bg-[#222325] py-16 sm:py-20 md:py-28">
-      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-8">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
           <div>
             <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">

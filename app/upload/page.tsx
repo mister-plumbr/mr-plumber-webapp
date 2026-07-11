@@ -115,7 +115,7 @@ export default function UploadPage() {
     <>
       <Navbar />
       <main className="flex-1 bg-[#fafafa]">
-        <div className="mx-auto max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <div className="mx-auto max-w-[1200px] px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
           {/* Header */}
           <div className="mb-10">
             <Link

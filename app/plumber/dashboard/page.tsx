@@ -296,7 +296,7 @@ export default function PlumberDashboardPage() {
   return (
     <div className="flex h-screen flex-col bg-[#fafafa]">
       {/* Header */}
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#e4e4e7] bg-white px-4 sm:px-6 lg:px-8">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#e4e4e7] bg-white px-5 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-semibold tracking-tight text-[#222325]">
@@ -323,7 +323,7 @@ export default function PlumberDashboardPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Job list */}
         <div className="flex w-full flex-col border-r border-[#e4e4e7] bg-white sm:w-[360px]">
-          <div className="border-b border-[#e4e4e7] p-4">
+          <div className="border-b border-[#e4e4e7] p-5">
             <h2 className="text-[16px] font-semibold text-[#222325]">
               Today&apos;s jobs
             </h2>
@@ -331,7 +331,7 @@ export default function PlumberDashboardPage() {
               {bookings.length} assigned
             </p>
           </div>
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-5">
             <div className="space-y-3">
               {bookings.map((job) => (
                 <JobCard

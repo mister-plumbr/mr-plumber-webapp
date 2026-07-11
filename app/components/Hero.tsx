@@ -32,7 +32,7 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1200px] px-4 py-16 sm:px-6 sm:py-20 md:py-28 lg:px-8 lg:py-32">
+      <div className="relative mx-auto max-w-[1200px] px-5 py-16 sm:px-6 sm:py-20 md:py-28 lg:px-8 lg:py-32">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Left content */}
           <div className="max-w-2xl">

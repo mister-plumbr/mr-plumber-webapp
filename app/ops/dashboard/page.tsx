@@ -296,7 +296,7 @@ export default function OpsDashboardPage() {
   return (
     <div className="flex h-screen flex-col bg-[#fafafa]">
       {/* Top bar */}
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#e4e4e7] bg-white px-4 sm:px-6 lg:px-8">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#e4e4e7] bg-white px-5 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-semibold tracking-tight text-[#222325]">
@@ -321,7 +321,7 @@ export default function OpsDashboardPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Queue sidebar */}
         <div className="flex w-full flex-col border-r border-[#e4e4e7] bg-white sm:w-[360px]">
-          <div className="border-b border-[#e4e4e7] p-4">
+          <div className="border-b border-[#e4e4e7] p-5">
             <div className="flex gap-2 overflow-x-auto pb-2">
               {filters.map((f) => (
                 <button

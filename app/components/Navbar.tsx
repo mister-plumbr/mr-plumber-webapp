@@ -9,7 +9,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#dadbdd] bg-white/95 backdrop-blur-sm">
-      <nav className="mx-auto flex h-[72px] max-w-[1200px] items-center justify-between px-4 py-3 sm:px-6 md:h-[88px] lg:px-8">
+      <nav className="mx-auto flex h-[72px] max-w-[1200px] items-center justify-between px-5 py-3 sm:px-6 md:h-[88px] lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
           <Logo size={36} />
@@ -68,7 +68,7 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div className="md:hidden absolute top-[72px] left-0 right-0 border-b border-[#dadbdd] bg-white shadow-lg">
-          <div className="mx-auto max-w-[1200px] px-4 py-4 flex flex-col gap-2">
+          <div className="mx-auto max-w-[1200px] px-5 py-4 flex flex-col gap-2">
             <div className="flex w-full items-center overflow-hidden rounded-[12px] border border-[#dadbdd] bg-white mb-2">
               <input
                 type="text"
