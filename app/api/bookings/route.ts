@@ -11,8 +11,12 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const where =
-      auth.role === "CUSTOMER" ? { userId: auth.userId } : undefined;
+    let where = {};
+    if (auth.role === "CUSTOMER") {
+      where = { userId: auth.userId };
+    } else if (auth.role === "PLUMBER") {
+      where = { plumberId: auth.userId };
+    }
 
     const bookings = await prisma.booking.findMany({
       where,

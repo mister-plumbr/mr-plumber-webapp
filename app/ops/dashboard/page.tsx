@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import QueueList from "./components/QueueList";
 import EstimateBuilder from "./components/EstimateBuilder";
 import AssignPlumber from "./components/AssignPlumber";
 import {
-  bookings as initialBookings,
   Booking,
-  BookingStatus,
+  Plumber,
   formatDateTime,
   formatCurrency,
   getStatusColor,
@@ -26,61 +26,272 @@ const filters: { key: Filter; label: string }[] = [
   { key: "active", label: "Active" },
 ];
 
+interface ApiBooking {
+  id: string;
+  requestId: string;
+  title: string;
+  category: string;
+  description: string;
+  address: string;
+  landmark?: string;
+  isEmergency: boolean;
+  status: string;
+  createdAt: string;
+  preferredTime?: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+  };
+  plumber?: {
+    id: string;
+    name: string;
+    phone: string;
+    rating: number;
+    jobsCompleted: number;
+    initials: string;
+    location: string;
+  } | null;
+  estimate?: {
+    labour: number;
+    travel: number;
+    parts: string;
+    min: number;
+    max: number;
+    notes?: string | null;
+    expiresAt: string;
+  } | null;
+  notes: { content: string; createdAt: string }[];
+}
+
+interface ApiPlumber {
+  id: string;
+  name: string;
+  phone: string;
+  rating: number;
+  jobsCompleted: number;
+  initials: string;
+  location: string;
+}
+
+function mapApiBooking(api: ApiBooking): Booking {
+  return {
+    id: api.requestId,
+    customerName: `${api.user.firstName} ${api.user.lastName}`,
+    customerPhone: api.user.phone,
+    title: api.title,
+    category: api.category,
+    description: api.description,
+    address: api.address,
+    landmark: api.landmark,
+    isEmergency: api.isEmergency,
+    status: api.status.replace(/_/g, " ") as Booking["status"],
+    createdAt: api.createdAt,
+    preferredTime: api.preferredTime,
+    photos: [],
+    internalNotes: api.notes[0]?.content,
+    estimate: api.estimate
+      ? {
+          range: { min: api.estimate.min, max: api.estimate.max },
+          notes: api.estimate.notes ?? "",
+          parts: api.estimate.parts
+            ? (JSON.parse(api.estimate.parts) as { name: string; cost: number }[])
+            : [],
+          labour: api.estimate.labour,
+          travel: api.estimate.travel,
+          expiresAt: api.estimate.expiresAt,
+        }
+      : undefined,
+    plumber: api.plumber
+      ? {
+          id: api.plumber.id,
+          name: api.plumber.name,
+          phone: api.plumber.phone,
+          rating: api.plumber.rating,
+          jobsCompleted: api.plumber.jobsCompleted,
+          initials: api.plumber.initials,
+          location: api.plumber.location,
+        }
+      : undefined,
+  };
+}
+
 export default function OpsDashboardPage() {
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
-  const [selected, setSelected] = useState<Booking>(initialBookings[0]);
+  const router = useRouter();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [plumbers, setPlumbers] = useState<Plumber[]>([]);
+  const [selected, setSelected] = useState<Booking | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
-  const [notes, setNotes] = useState(selected.internalNotes ?? "");
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const updateBooking = (id: string, updates: Partial<Booking>) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
-    );
-    setSelected((prev) => (prev.id === id ? { ...prev, ...updates } : prev));
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [bookingsRes, plumbersRes] = await Promise.all([
+          fetch("/api/bookings"),
+          fetch("/api/plumbers"),
+        ]);
+
+        if (bookingsRes.status === 401 || plumbersRes.status === 401) {
+          router.push("/ops/login");
+          return;
+        }
+
+        if (!bookingsRes.ok) throw new Error("Failed to fetch bookings");
+        if (!plumbersRes.ok) throw new Error("Failed to fetch plumbers");
+
+        const bookingsData = (await bookingsRes.json()) as { bookings: ApiBooking[] };
+        const plumbersData = (await plumbersRes.json()) as { plumbers: ApiPlumber[] };
+
+        const mappedBookings = bookingsData.bookings.map(mapApiBooking);
+        const mappedPlumbers = plumbersData.plumbers.map((p) => ({
+          id: p.id,
+          name: p.name,
+          phone: p.phone,
+          rating: p.rating,
+          jobsCompleted: p.jobsCompleted,
+          initials: p.initials,
+          location: p.location,
+        }));
+
+        setBookings(mappedBookings);
+        setPlumbers(mappedPlumbers);
+        setSelected(mappedBookings[0] ?? null);
+        setNotes(mappedBookings[0]?.internalNotes ?? "");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [router]);
+
+  const refreshSelected = async () => {
+    if (!selected) return;
+    const res = await fetch(`/api/bookings/${selected.id}`);
+    if (res.ok) {
+      const data = (await res.json()) as { booking: ApiBooking };
+      const mapped = mapApiBooking(data.booking);
+      setBookings((prev) =>
+        prev.map((b) => (b.id === mapped.id ? mapped : b))
+      );
+      setSelected(mapped);
+      setNotes(mapped.internalNotes ?? "");
+    }
   };
 
-  const handleSaveEstimate = (estimate: NonNullable<Booking["estimate"]>) => {
-    updateBooking(selected.id, {
-      estimate,
-      status: "Estimate Generated",
-      internalNotes: notes,
+  const handleSaveEstimate = async (
+    estimate: NonNullable<Booking["estimate"]>
+  ) => {
+    if (!selected) return;
+    const parts = estimate.parts;
+    const baseTotal = estimate.labour + estimate.travel + parts.reduce((s, p) => s + p.cost, 0);
+    const buffer = Math.round((estimate.range.max - baseTotal) / baseTotal * 100) || 15;
+
+    const res = await fetch(`/api/bookings/${selected.id}/estimate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        labour: estimate.labour,
+        travel: estimate.travel,
+        parts,
+        notes: estimate.notes,
+        bufferPercent: buffer,
+      }),
+    });
+
+    if (res.ok) {
+      await saveNotes();
+      await refreshSelected();
+    }
+  };
+
+  const handleAssignPlumber = async (plumber: Plumber) => {
+    if (!selected) return;
+    const res = await fetch(`/api/bookings/${selected.id}/assign`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plumberId: plumber.id }),
+    });
+
+    if (res.ok) {
+      await saveNotes();
+      await refreshSelected();
+    }
+  };
+
+  const saveNotes = async () => {
+    if (!selected || !notes.trim()) return;
+    await fetch(`/api/bookings/${selected.id}/notes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: notes }),
     });
   };
 
-  const handleAssignPlumber = (plumber: NonNullable<Booking["plumber"]>) => {
-    updateBooking(selected.id, {
-      plumber,
-      status: "Plumber Assigned",
-      internalNotes: notes,
-    });
-  };
-
-  const handleStatusAdvance = () => {
-    const statusFlow: BookingStatus[] = [
-      "Submitted",
-      "Under Review",
-      "Estimate Generated",
-      "Estimate Accepted",
-      "Plumber Assigned",
-      "Plumber En Route",
-      "Arrived",
-      "Work Started",
-      "Completed",
-      "Payment Pending",
-      "Paid",
-      "Closed",
+  const handleStatusAdvance = async () => {
+    if (!selected) return;
+    const flow = [
+      "SUBMITTED",
+      "UNDER_REVIEW",
+      "ESTIMATE_GENERATED",
+      "ESTIMATE_ACCEPTED",
+      "PLUMBER_ASSIGNED",
+      "PLUMBER_EN_ROUTE",
+      "ARRIVED",
+      "WORK_STARTED",
+      "COMPLETED",
+      "PAYMENT_PENDING",
+      "PAID",
+      "CLOSED",
     ];
-    const currentIndex = statusFlow.indexOf(selected.status);
-    const nextStatus = statusFlow[currentIndex + 1];
-    if (nextStatus) {
-      updateBooking(selected.id, { status: nextStatus, internalNotes: notes });
+    const currentIndex = flow.indexOf(selected.status.replace(/ /g, "_"));
+    const nextStatus = flow[currentIndex + 1];
+    if (!nextStatus) return;
+
+    const res = await fetch(`/api/bookings/${selected.id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: nextStatus }),
+    });
+
+    if (res.ok) {
+      await refreshSelected();
     }
   };
 
   const sla = useMemo(
-    () => getSlaMinutes(selected.createdAt),
-    [selected.createdAt]
+    () => (selected ? getSlaMinutes(selected.createdAt) : 0),
+    [selected]
   );
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+        <p className="text-[#62646a]">Loading operations dashboard...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
+
+  if (!selected) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+        <p className="text-[#62646a]">No requests in queue.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen flex-col bg-[#f4f4f5]">
@@ -249,10 +460,6 @@ export default function OpsDashboardPage() {
                       </p>
                     )}
                   </div>
-                  <p className="mt-3 text-[12px] text-[#74767e]">
-                    Click photo to zoom (placeholder — images will load once real
-                    uploads are wired).
-                  </p>
                 </div>
 
                 <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
@@ -268,9 +475,7 @@ export default function OpsDashboardPage() {
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      updateBooking(selected.id, { internalNotes: notes })
-                    }
+                    onClick={saveNotes}
                     className="mt-3 rounded-[8px] bg-[#f97316] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#ea580c] transition-colors"
                   >
                     Save notes
@@ -322,7 +527,10 @@ export default function OpsDashboardPage() {
 
                 {(selected.status === "Estimate Accepted" ||
                   selected.status === "Plumber Assigned") && (
-                  <AssignPlumber onAssign={handleAssignPlumber} />
+                  <AssignPlumber
+                    plumbers={plumbers}
+                    onAssign={handleAssignPlumber}
+                  />
                 )}
 
                 {selected.plumber && (
@@ -351,7 +559,6 @@ export default function OpsDashboardPage() {
                   </div>
                 )}
 
-                {/* Status actions */}
                 <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
                   <h3 className="text-[16px] font-semibold text-[#222325]">
                     Update status

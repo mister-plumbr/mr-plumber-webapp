@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { availablePlumbers, Plumber } from "@/lib/data";
+import { Plumber } from "@/lib/data";
 
 interface AssignPlumberProps {
+  plumbers: Plumber[];
   onAssign: (plumber: Plumber) => void;
 }
 
-export default function AssignPlumber({ onAssign }: AssignPlumberProps) {
-  const [selected, setSelected] = useState<string>(availablePlumbers[0]?.id ?? "");
+export default function AssignPlumber({ plumbers, onAssign }: AssignPlumberProps) {
+  const [selected, setSelected] = useState<string>(plumbers[0]?.id ?? "");
 
   const handleAssign = () => {
-    const plumber = availablePlumbers.find((p) => p.id === selected);
+    const plumber = plumbers.find((p) => p.id === selected);
     if (plumber) onAssign(plumber);
   };
 
@@ -25,7 +26,7 @@ export default function AssignPlumber({ onAssign }: AssignPlumberProps) {
       </p>
 
       <div className="mt-4 space-y-2">
-        {availablePlumbers.map((plumber) => (
+        {plumbers.map((plumber) => (
           <label
             key={plumber.id}
             className={`flex cursor-pointer items-center gap-3 rounded-[12px] border p-3 transition-colors ${

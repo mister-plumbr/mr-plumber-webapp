@@ -28,12 +28,28 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
     const { status } = parsed.data;
 
-    const booking = await prisma.booking.update({
+    const booking = await prisma.booking.findUnique({
+      where: { id },
+    });
+
+    if (!booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    if (auth.role === "CUSTOMER" && booking.userId !== auth.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if (auth.role === "PLUMBER" && booking.plumberId !== auth.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const updated = await prisma.booking.update({
       where: { id },
       data: { status },
     });
 
-    return NextResponse.json({ booking });
+    return NextResponse.json({ booking: updated });
   } catch (error) {
     console.error("Status update error:", error);
     return NextResponse.json(

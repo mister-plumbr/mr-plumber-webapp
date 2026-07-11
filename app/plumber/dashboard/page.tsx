@@ -1,79 +1,199 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import JobCard from "./components/JobCard";
 import InvoicePreview from "./components/InvoicePreview";
 import {
-  bookings as initialBookings,
   Booking,
-  BookingStatus,
   formatDateTime,
   formatCurrency,
   getStatusColor,
-  availablePlumbers,
 } from "@/lib/data";
 
-const plumberId = "p2"; // Simulated logged-in plumber
+interface ApiBooking {
+  id: string;
+  requestId: string;
+  title: string;
+  category: string;
+  description: string;
+  address: string;
+  landmark?: string;
+  isEmergency: boolean;
+  status: string;
+  createdAt: string;
+  preferredTime?: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+  };
+  estimate?: {
+    labour: number;
+    travel: number;
+    parts: string;
+    min: number;
+    max: number;
+  } | null;
+  invoice?: {
+    labour: number;
+    travel: number;
+    parts: string;
+    tax: number;
+    total: number;
+    isPaid: boolean;
+  } | null;
+}
 
-const statusActions: Record<BookingStatus, string> = {
-  Submitted: "",
-  "Under Review": "",
-  "Estimate Generated": "",
-  "Estimate Accepted": "Start journey",
-  "Plumber Assigned": "Start journey",
-  "Plumber En Route": "Mark arrived",
-  Arrived: "Start work",
-  "Work Started": "Complete job",
-  Completed: "Request payment",
-  "Payment Pending": "Mark paid",
-  Paid: "Close job",
-  Closed: "",
-  Cancelled: "",
+const statusActions: Record<string, string> = {
+  "ESTIMATE ACCEPTED": "Start journey",
+  "PLUMBER ASSIGNED": "Start journey",
+  "PLUMBER EN ROUTE": "Mark arrived",
+  ARRIVED: "Start work",
+  "WORK STARTED": "Complete job",
+  COMPLETED: "Generate invoice",
+  "PAYMENT PENDING": "Mark paid",
+  PAID: "Close job",
 };
 
-export default function PlumberDashboardPage() {
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
-  const assignedJobs = bookings.filter(
-    (b) => b.plumber?.id === plumberId || b.status === "Estimate Accepted"
-  );
+function mapApiBooking(api: ApiBooking): Booking {
+  return {
+    id: api.requestId,
+    customerName: `${api.user.firstName} ${api.user.lastName}`,
+    customerPhone: api.user.phone,
+    title: api.title,
+    category: api.category,
+    description: api.description,
+    address: api.address,
+    landmark: api.landmark,
+    isEmergency: api.isEmergency,
+    status: api.status.replace(/_/g, " ") as Booking["status"],
+    createdAt: api.createdAt,
+    preferredTime: api.preferredTime,
+    photos: [],
+    estimate: api.estimate
+      ? {
+          range: { min: api.estimate.min, max: api.estimate.max },
+          notes: "",
+          parts: api.estimate.parts
+            ? (JSON.parse(api.estimate.parts) as { name: string; cost: number }[])
+            : [],
+          labour: api.estimate.labour,
+          travel: api.estimate.travel,
+          expiresAt: new Date().toISOString(),
+        }
+      : undefined,
+    finalPrice: api.invoice?.total,
+  };
+}
 
-  const [selected, setSelected] = useState<Booking>(
-    assignedJobs[0] ?? initialBookings[0]
-  );
-  const [labour, setLabour] = useState(selected.estimate?.labour ?? 0);
-  const [materials, setMaterials] = useState<{ name: string; cost: number }[]>(
-    selected.estimate?.parts ?? [{ name: "", cost: 0 }]
-  );
+export default function PlumberDashboardPage() {
+  const router = useRouter();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [selected, setSelected] = useState<Booking | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [plumber, setPlumber] = useState({
+    name: "",
+    initials: "",
+  });
+
+  const [labour, setLabour] = useState(0);
+  const [materials, setMaterials] = useState<{ name: string; cost: number }[]>([
+    { name: "", cost: 0 },
+  ]);
   const [beforePhotos, setBeforePhotos] = useState<string[]>([]);
   const [afterPhotos, setAfterPhotos] = useState<string[]>([]);
   const [signature, setSignature] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const updateBooking = (id: string, updates: Partial<Booking>) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
-    );
-    setSelected((prev) => (prev.id === id ? { ...prev, ...updates } : prev));
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/bookings");
+        if (res.status === 401) {
+          router.push("/plumber/login");
+          return;
+        }
+        if (!res.ok) throw new Error("Failed to fetch jobs");
+
+        const data = (await res.json()) as { bookings: ApiBooking[] };
+        const mapped = data.bookings.map(mapApiBooking);
+        setBookings(mapped);
+        const first = mapped[0] ?? null;
+        setSelected(first);
+        setLabour(first?.estimate?.labour ?? 0);
+        setMaterials(first?.estimate?.parts ?? [{ name: "", cost: 0 }]);
+
+        const meRes = await fetch("/api/auth/me");
+        if (meRes.ok) {
+          const me = (await meRes.json()) as { user: { firstName: string; lastName: string } };
+          setPlumber({
+            name: `${me.user.firstName} ${me.user.lastName}`,
+            initials: `${me.user.firstName[0]}${me.user.lastName[0]}`,
+          });
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [router]);
+
+  const refreshSelected = async () => {
+    if (!selected) return;
+    const res = await fetch(`/api/bookings/${selected.id}`);
+    if (res.ok) {
+      const data = (await res.json()) as { booking: ApiBooking };
+      const mapped = mapApiBooking(data.booking);
+      setBookings((prev) => prev.map((b) => (b.id === mapped.id ? mapped : b)));
+      setSelected(mapped);
+    }
   };
 
-  const handleStatusAdvance = () => {
-    const flow: BookingStatus[] = [
-      "Estimate Accepted",
-      "Plumber Assigned",
-      "Plumber En Route",
-      "Arrived",
-      "Work Started",
-      "Completed",
-      "Payment Pending",
-      "Paid",
-      "Closed",
+  const advanceStatus = async () => {
+    if (!selected) return;
+    const flow = [
+      "ESTIMATE_ACCEPTED",
+      "PLUMBER_ASSIGNED",
+      "PLUMBER_EN_ROUTE",
+      "ARRIVED",
+      "WORK_STARTED",
+      "COMPLETED",
+      "PAYMENT_PENDING",
+      "PAID",
+      "CLOSED",
     ];
-    const currentIndex = flow.indexOf(selected.status);
+    const currentIndex = flow.indexOf(selected.status.replace(/ /g, "_"));
     const nextStatus = flow[currentIndex + 1];
-    if (nextStatus) {
-      updateBooking(selected.id, { status: nextStatus });
-    }
+    if (!nextStatus) return;
+
+    const res = await fetch(`/api/bookings/${selected.id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: nextStatus }),
+    });
+
+    if (res.ok) await refreshSelected();
+  };
+
+  const generateInvoice = async () => {
+    if (!selected) return;
+    const res = await fetch(`/api/bookings/${selected.id}/invoice`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        labour,
+        travel: selected.estimate?.travel ?? 0,
+        parts: materials.filter((m) => m.name.trim() !== ""),
+      }),
+    });
+
+    if (res.ok) await refreshSelected();
   };
 
   const handleFileUpload = (
@@ -147,7 +267,31 @@ export default function PlumberDashboardPage() {
     canvas.addEventListener("mouseup", stop);
   };
 
-  const actionLabel = statusActions[selected.status];
+  const actionLabel = selected ? statusActions[selected.status.replace(/ /g, "_")] : "";
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+        <p className="text-[#62646a]">Loading jobs...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
+
+  if (!selected) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+        <p className="text-[#62646a]">No jobs assigned today.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen flex-col bg-[#f4f4f5]">
@@ -164,14 +308,14 @@ export default function PlumberDashboardPage() {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <div className="text-right hidden sm:block">
+          <div className="hidden text-right sm:block">
             <p className="text-[13px] font-semibold text-[#222325]">
-              {availablePlumbers.find((p) => p.id === plumberId)?.name}
+              {plumber.name || "Technician"}
             </p>
             <p className="text-[11px] text-[#74767e]">Verified plumber</p>
           </div>
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#7c2d12] text-[13px] font-semibold text-white">
-            {availablePlumbers.find((p) => p.id === plumberId)?.initials}
+            {plumber.initials || "T"}
           </div>
         </div>
       </header>
@@ -184,12 +328,12 @@ export default function PlumberDashboardPage() {
               Today&apos;s jobs
             </h2>
             <p className="text-[12px] text-[#74767e]">
-              {assignedJobs.length} assigned
+              {bookings.length} assigned
             </p>
           </div>
           <div className="flex-1 overflow-y-auto p-4">
             <div className="space-y-3">
-              {assignedJobs.map((job) => (
+              {bookings.map((job) => (
                 <JobCard
                   key={job.id}
                   job={job}
@@ -197,9 +341,7 @@ export default function PlumberDashboardPage() {
                   onClick={() => {
                     setSelected(job);
                     setLabour(job.estimate?.labour ?? 0);
-                    setMaterials(
-                      job.estimate?.parts ?? [{ name: "", cost: 0 }]
-                    );
+                    setMaterials(job.estimate?.parts ?? [{ name: "", cost: 0 }]);
                   }}
                 />
               ))}
@@ -251,9 +393,7 @@ export default function PlumberDashboardPage() {
                     {selected.landmark && (
                       <div className="flex justify-between">
                         <span className="text-[#74767e]">Landmark</span>
-                        <span className="text-[#222325]">
-                          {selected.landmark}
-                        </span>
+                        <span className="text-[#222325]">{selected.landmark}</span>
                       </div>
                     )}
                     <div className="flex justify-between">
@@ -455,11 +595,26 @@ export default function PlumberDashboardPage() {
                 {actionLabel && (
                   <button
                     type="button"
-                    onClick={handleStatusAdvance}
+                    onClick={
+                      selected.status.replace(/ /g, "_") === "COMPLETED"
+                        ? generateInvoice
+                        : advanceStatus
+                    }
                     className="w-full rounded-[8px] bg-[#f97316] px-4 py-3.5 text-[16px] font-semibold text-white hover:bg-[#ea580c] transition-colors"
                   >
                     {actionLabel}
                   </button>
+                )}
+
+                {selected.finalPrice && (
+                  <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
+                    <p className="text-[14px] text-[#62646a]">
+                      Invoice total:{" "}
+                      <span className="font-semibold text-[#222325]">
+                        {formatCurrency(selected.finalPrice)}
+                      </span>
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
