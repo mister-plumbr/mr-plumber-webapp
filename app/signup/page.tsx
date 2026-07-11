@@ -3,13 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Logo, ArrowRight, CheckCircle } from "../components/icons";
-
-const benefits = [
-  "Book verified plumbers in minutes",
-  "Track jobs from estimate to invoice",
-  "Transparent pricing, no surprises",
-];
+import Icon from "../components/Icon";
+import Footer from "../components/Footer";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -56,180 +51,172 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left brand panel */}
-      <div className="hidden flex-col justify-between bg-[#222325] p-10 lg:flex lg:w-[45%] xl:w-[40%]">
-        <div>
-          <Link href="/" className="flex items-center gap-2.5">
-            <Logo size={36} />
-            <span className="text-[22px] font-semibold tracking-tight text-white">
-              mister plumbr<span className="text-[#f97316]">.</span>
-            </span>
+    <div className="flex min-h-screen flex-col bg-bg-main">
+      {/* Top navbar */}
+      <header className="sticky top-0 z-50 w-full bg-surface-container-lowest shadow-sm">
+        <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between px-6 py-4">
+          <Link href="/" className="flex items-center gap-2 text-xl font-bold text-primary">
+            <Icon name="plumbing" filled className="text-secondary" size={28} />
+            Mister Plumbr
+          </Link>
+          <nav className="hidden items-center gap-8 md:flex">
+            <Link href="/#services" className="text-base text-on-surface-variant hover:text-secondary">
+              Services
+            </Link>
+            <Link href="/#how-it-works" className="text-base text-on-surface-variant hover:text-secondary">
+              How it works
+            </Link>
+            <Link href="/#footer" className="text-base text-on-surface-variant hover:text-secondary">
+              Support
+            </Link>
+          </nav>
+          <Link
+            href="/upload"
+            className="rounded-full bg-secondary px-5 py-2 text-sm font-bold text-on-secondary hover:opacity-90 active:scale-95"
+          >
+            Book Now
           </Link>
         </div>
+      </header>
 
-        <div>
-          <h2 className="text-[36px] font-light leading-[1.1] tracking-tight text-white">
-            Get plumbing done
-            <br />
-            <span className="text-[#f97316]">the right way.</span>
-          </h2>
-          <div className="mt-8 space-y-4">
-            {benefits.map((benefit) => (
-              <div key={benefit} className="flex items-center gap-3 text-[15px] text-[#dadbdd]">
-                <CheckCircle size={18} className="text-[#f97316]" />
-                {benefit}
-              </div>
-            ))}
-          </div>
+      <main className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-10">
+        <div className="pointer-events-none absolute inset-0 opacity-5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/login-bg.jpg" alt="" className="h-full w-full object-cover" />
         </div>
 
-        <p className="text-[13px] text-[#74767e]">
-          © {new Date().getFullYear()} Mister Plumbr. All rights reserved.
-        </p>
-      </div>
-
-      {/* Right form panel */}
-      <div className="flex flex-1 flex-col bg-white">
-        <div className="flex h-16 items-center px-6 lg:hidden">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Logo size={32} />
-            <span className="text-[18px] font-semibold tracking-tight text-[#222325]">
-              mister plumbr<span className="text-[#f97316]">.</span>
-            </span>
-          </Link>
-        </div>
-
-        <main className="flex flex-1 items-center justify-center px-4 py-12">
-          <div className="w-full max-w-[420px]">
-            <h1 className="text-[32px] font-semibold tracking-tight text-[#222325]">
-              Create your account
-            </h1>
-            <p className="mt-2 text-[15px] text-[#62646a]">
-              Join Mister Plumbr to book verified plumbers in minutes.
-            </p>
+        <div className="relative z-10 w-full max-w-[440px]">
+          <div className="rounded-xl border border-border-subtle bg-surface-card p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-2px_rgba(0,0,0,0.05)] md:p-12">
+            <div className="mb-6 text-center">
+              <h1 className="text-3xl font-semibold text-primary">Create your account</h1>
+              <p className="mt-2 text-base text-on-surface-variant">
+                Join Mister Plumbr to book verified plumbers in minutes.
+              </p>
+            </div>
 
             {error && (
-              <div className="mt-5 rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-600">
+              <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-error">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[14px] font-semibold text-[#222325]">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="firstName" className="text-xs font-medium uppercase tracking-wider text-on-surface-variant">
                     First name
                   </label>
                   <input
+                    id="firstName"
                     type="text"
                     name="firstName"
                     required
                     value={form.firstName}
                     onChange={handleChange}
                     placeholder="Rahul"
-                    className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
+                    className="input-focus-ring w-full rounded-lg border border-border-subtle bg-bg-main px-4 py-3 text-base text-primary"
                   />
                 </div>
-                <div>
-                  <label className="block text-[14px] font-semibold text-[#222325]">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="lastName" className="text-xs font-medium uppercase tracking-wider text-on-surface-variant">
                     Last name
                   </label>
                   <input
+                    id="lastName"
                     type="text"
                     name="lastName"
                     required
                     value={form.lastName}
                     onChange={handleChange}
                     placeholder="Sharma"
-                    className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
+                    className="input-focus-ring w-full rounded-lg border border-border-subtle bg-bg-main px-4 py-3 text-base text-primary"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] font-semibold text-[#222325]">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="phone" className="text-xs font-medium uppercase tracking-wider text-on-surface-variant">
                   Mobile number
                 </label>
                 <input
+                  id="phone"
                   type="tel"
                   name="phone"
                   required
                   value={form.phone}
                   onChange={handleChange}
                   placeholder="+91 98765 43210"
-                  className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
+                  className="input-focus-ring w-full rounded-lg border border-border-subtle bg-bg-main px-4 py-3 text-base text-primary"
                 />
               </div>
 
-              <div>
-                <label className="block text-[14px] font-semibold text-[#222325]">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="email" className="text-xs font-medium uppercase tracking-wider text-on-surface-variant">
                   Email
                 </label>
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   required
                   value={form.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
+                  className="input-focus-ring w-full rounded-lg border border-border-subtle bg-bg-main px-4 py-3 text-base text-primary"
                 />
               </div>
 
-              <div>
-                <label className="block text-[14px] font-semibold text-[#222325]">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="password" className="text-xs font-medium uppercase tracking-wider text-on-surface-variant">
                   Password
                 </label>
                 <input
+                  id="password"
                   type="password"
                   name="password"
                   required
                   value={form.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
+                  className="input-focus-ring w-full rounded-lg border border-border-subtle bg-bg-main px-4 py-3 text-base text-primary"
                 />
               </div>
 
-              <label className="flex items-start gap-3 text-[14px] text-[#62646a]">
-                <input
-                  type="checkbox"
-                  required
-                  className="mt-1 h-4 w-4 accent-[#f97316]"
-                />
-                I agree to the{" "}
-                <Link href="#" className="text-[#f97316] hover:text-[#ea580c]">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="#" className="text-[#f97316] hover:text-[#ea580c]">
-                  Privacy Policy
-                </Link>
+              <label className="flex cursor-pointer items-start gap-3 text-sm text-on-surface-variant">
+                <input type="checkbox" required className="mt-1 h-4 w-4 rounded border-border-subtle text-secondary focus:ring-secondary" />
+                <span>
+                  I agree to the{" "}
+                  <Link href="#" className="text-secondary hover:underline">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="#" className="text-secondary hover:underline">
+                    Privacy Policy
+                  </Link>
+                </span>
               </label>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#f97316] px-6 py-3.5 text-[16px] font-semibold text-white shadow-[0_8px_24px_-6px_rgba(249,115,22,0.3)] hover:bg-[#ea580c] disabled:opacity-60 transition-colors"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-secondary-container py-3.5 text-lg font-bold text-on-primary shadow-sm transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
               >
                 {loading ? "Creating account..." : "Create account"}
-                {!loading && <ArrowRight size={18} />}
+                <Icon name="arrow_forward" size={20} />
               </button>
             </form>
 
-            <div className="mt-8 text-center text-[14px] text-[#62646a]">
+            <p className="mt-6 text-center text-base text-on-surface-variant">
               Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-semibold text-[#f97316] hover:text-[#ea580c]"
-              >
+              <Link href="/login" className="font-bold text-secondary hover:underline">
                 Sign in
               </Link>
-            </div>
+            </p>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

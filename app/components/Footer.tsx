@@ -1,86 +1,86 @@
 import Link from "next/link";
-import { Logo } from "./icons";
-
-const footerLinks = {
-  Services: [
-    "Tap Repair",
-    "Pipe Leak",
-    "Drain Cleaning",
-    "Toilet Repair",
-    "Water Heater",
-    "Bathroom Fitting",
-  ],
-  Company: ["About us", "How it works", "Careers", "Press", "Contact"],
-  Support: ["Help Center", "Safety", "Cancellation", "Complaints", "FAQs"],
-};
+import Icon from "./Icon";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#e4e4e7] bg-white">
-      <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-5">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2.5">
-              <Logo size={36} />
-              <span className="text-[20px] font-semibold tracking-tight text-[#222325]">
-                mister plumbr
-                <span className="text-[#f97316]">.</span>
-              </span>
-            </Link>
-            <p className="mt-4 max-w-sm text-[15px] leading-[1.7] text-[#62646a]">
-              Verified plumbers, transparent estimates, and human-reviewed
-              service requests. Plumbing made simple for Indian homes.
-            </p>
-            <div className="mt-6 flex gap-4">
-              {["Twitter", "Instagram", "LinkedIn"].map((social) => (
-                <a
-                  key={social}
-                  href="#"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#dadbdd] text-[12px] font-semibold text-[#62646a] hover:border-[#f97316] hover:text-[#f97316] transition-colors"
-                >
-                  {social[0]}
-                </a>
-              ))}
+    <footer id="footer" className="bg-primary text-on-primary">
+      <div className="mx-auto grid w-full max-w-[1200px] grid-cols-1 gap-8 px-6 py-14 md:grid-cols-4">
+        {/* Brand */}
+        <div className="md:col-span-1">
+          <div className="mb-4 flex items-center gap-2 text-2xl font-bold">
+            <Icon name="plumbing" filled className="text-secondary" size={28} />
+            Mister Plumbr
+          </div>
+          <p className="mb-6 text-base leading-relaxed opacity-80">
+            Professional plumbing excellence. High-trust utility dashboards for your
+            home maintenance needs.
+          </p>
+          <div className="flex gap-4">
+            <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-secondary">
+              <Icon name="share" size={20} />
+            </div>
+            <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-secondary">
+              <Icon name="contact_support" size={20} />
             </div>
           </div>
-
-          {/* Links */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="text-[14px] font-semibold uppercase tracking-wider text-[#222325]">
-                {category}
-              </h4>
-              <ul className="mt-5 flex flex-col gap-3">
-                {links.map((link) => (
-                  <li key={link}>
-                    <Link
-                      href="#"
-                      className="text-[15px] text-[#62646a] hover:text-[#f97316] transition-colors"
-                    >
-                      {link}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[#e4e4e7] pt-8 sm:flex-row">
-          <p className="text-[14px] text-[#74767e]">
-            © {new Date().getFullYear()} Mister Plumbr. All rights reserved.
-          </p>
-          <div className="flex items-center gap-6">
-            {["Privacy", "Terms", "Sitemap"].map((link) => (
-              <Link
-                key={link}
-                href="#"
-                className="text-[14px] text-[#62646a] hover:text-[#f97316] transition-colors"
-              >
-                {link}
-              </Link>
+        {/* Services */}
+        <div>
+          <h4 className="mb-4 font-bold text-white">Services</h4>
+          <ul className="space-y-3">
+            {["Emergency Services", "Pipe Repair", "Drainage", "Installations"].map((item) => (
+              <li key={item}>
+                <Link href="/upload" className="text-base opacity-80 transition-colors hover:text-secondary-container">
+                  {item}
+                </Link>
+              </li>
             ))}
+          </ul>
+        </div>
+
+        {/* Company */}
+        <div>
+          <h4 className="mb-4 font-bold text-white">Company</h4>
+          <ul className="space-y-3">
+            {["Customer Reviews", "Pricing Guide", "Our Story", "Privacy Policy"].map((item) => (
+              <li key={item}>
+                <Link href="#" className="text-base opacity-80 transition-colors hover:text-secondary-container">
+                  {item}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Contact */}
+        <div>
+          <h4 className="mb-4 font-bold text-white">Get in touch</h4>
+          <p className="mb-4 text-base opacity-80">
+            Available 24/7 for emergency repairs in your local area.
+          </p>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="mb-1 flex items-center gap-2 font-bold text-secondary-fixed">
+              <Icon name="phone_in_talk" size={18} />
+              1-800-PLUMBR
+            </div>
+            <div className="text-xs opacity-60">Professional help is just a call away</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-white/10 py-6">
+        <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center justify-between gap-4 px-6 md:flex-row">
+          <div className="text-sm opacity-60">
+            © 2024 Mister Plumbr. Professional Plumbing Excellence.
+          </div>
+          <div className="flex gap-6 text-sm">
+            <Link href="#" className="opacity-60 transition-colors hover:text-white">
+              Terms of Service
+            </Link>
+            <Link href="#" className="opacity-60 transition-colors hover:text-white">
+              Accessibility
+            </Link>
           </div>
         </div>
       </div>

@@ -1,109 +1,65 @@
-import Link from "next/link";
-import { ShieldCheck, Clock, Star, ArrowRight, CheckCircle } from "./icons";
-
-const trustItems = [
-  {
-    icon: ShieldCheck,
-    title: "Verified plumbers",
-    description: "Every plumber is background-checked, trained, and rated by customers like you.",
-  },
-  {
-    icon: Clock,
-    title: "Fast response",
-    description: "Get an estimate within hours and same-day service for emergencies.",
-  },
-  {
-    icon: Star,
-    title: "Fair pricing",
-    description: "No hidden charges. You approve the estimate before any work starts.",
-  },
-];
+import Icon from "./Icon";
 
 const stats = [
-  { value: "4.9", label: "Average rating", suffix: "★" },
-  { value: "30m", label: "First response time" },
-  { value: "2,000+", label: "Homes serviced" },
-  { value: "₹650", label: "Starting estimate" },
+  { value: "4.9/5", label: "Average Rating" },
+  { value: "30m", label: "Avg Response" },
+  { value: "2k+", label: "Homes Serviced" },
+  { value: "100%", label: "Guarantee" },
 ];
 
 export default function Trust() {
   return (
-    <section className="bg-[#222325] py-20 sm:py-28">
-      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-          <div>
-            <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">
-              Why Mister Plumbr
-            </span>
-            <h2 className="mt-3 text-heading-lg text-white">
-              Why homeowners trust us
-            </h2>
-            <p className="mt-4 text-[17px] leading-[1.7] text-[#dadbdd]">
-              We combine expert human review with verified local plumbers so you
-              get the right fix at the right price — every time.
+    <section className="overflow-hidden bg-bg-main py-16 lg:py-24">
+      <div className="mx-auto max-w-[1200px] px-6">
+        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-6">
+          {/* Left copy + stats */}
+          <div className="lg:col-span-5">
+            <h2 className="mb-4 text-3xl font-semibold text-primary">Why homeowners trust us</h2>
+            <p className="mb-8 text-lg text-on-surface-variant">
+              We&apos;ve built our reputation on three core pillars: absolute
+              transparency, rapid response, and masterful craftsmanship.
             </p>
 
-            <div className="mt-10 space-y-6">
-              {trustItems.map((item) => (
-                <div key={item.title} className="flex gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-white/10 text-[#f97316]">
-                    <item.icon size={24} />
-                  </div>
-                  <div>
-                    <h3 className="text-[17px] font-semibold text-white">
-                      {item.title}
-                    </h3>
-                    <p className="mt-1 text-[15px] leading-[1.6] text-[#dadbdd]">
-                      {item.description}
-                    </p>
-                  </div>
+            <div className="grid grid-cols-2 gap-6">
+              {stats.map((stat) => (
+                <div key={stat.label} className="rounded-xl bg-surface-container p-6">
+                  <div className="mb-1 text-3xl font-bold text-secondary">{stat.value}</div>
+                  <div className="text-sm font-medium text-on-surface-variant">{stat.label}</div>
                 </div>
               ))}
             </div>
-
-            <Link
-              href="/upload"
-              className="group mt-10 inline-flex items-center gap-2 rounded-[8px] border border-white/20 bg-white/5 px-7 py-3.5 text-[15px] font-semibold text-white hover:bg-white/10 transition-colors"
-            >
-              Get your estimate
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
           </div>
 
-          {/* Stats panel */}
-          <div className="rounded-[24px] border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
-            <div className="grid grid-cols-2 gap-8">
-              {stats.map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="flex items-center justify-center gap-2 text-[42px] font-semibold leading-none text-white sm:text-[48px]">
-                    {stat.value}
-                    {stat.suffix && (
-                      <span className="text-[24px] text-[#f97316]">{stat.suffix}</span>
-                    )}
+          {/* Right image + testimonial */}
+          <div className="lg:col-span-7">
+            <div
+              className="relative overflow-hidden rounded-2xl shadow-xl lg:h-[500px]"
+              style={{
+                backgroundImage: "url('/images/trust-bg.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-10">
+                <div className="rounded-xl border border-white/20 bg-surface-card/90 p-6 backdrop-blur-md">
+                  <div className="mb-3 flex gap-1 text-success-gold">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Icon key={i} name="star" filled size={18} />
+                    ))}
                   </div>
-                  <p className="mt-2 text-[14px] text-[#dadbdd]">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 border-t border-white/10 pt-8">
-              <div className="flex items-start gap-3">
-                <div className="flex text-[#f97316]">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={18} />
-                  ))}
-                </div>
-                <p className="text-[15px] text-[#dadbdd]">
-                  &quot;Quick diagnosis and clean work. The plumber arrived on time and the estimate was fair. Would recommend.&quot;
-                </p>
-              </div>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f97316] text-[14px] font-bold text-white">
-                  SR
-                </div>
-                <div>
-                  <p className="text-[14px] font-semibold text-white">Sneha Rao</p>
-                  <p className="text-[12px] text-[#74767e]">Bangalore</p>
+                  <p className="mb-4 text-lg italic text-primary">
+                    &ldquo;Finally, a plumbing service that feels like it&apos;s from the 21st
+                    century. The photo estimate was spot on, and the plumber was here in
+                    20 minutes. No surprises, just excellence.&rdquo;
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-secondary-fixed" />
+                    <div>
+                      <div className="font-bold text-primary">Sarah Jenkins</div>
+                      <div className="text-xs text-on-surface-variant">Verified Homeowner</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,84 +1,79 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { UploadCloud, X, ArrowRight, Camera, AlertCircle, CheckCircle, Home, Calendar, Phone } from "../components/icons";
+import Icon from "../components/Icon";
 
 const categories = [
-  "Tap / Faucet leak",
-  "Pipe leak / burst",
-  "Drain clog",
-  "Toilet repair",
-  "Water heater / geyser",
-  "Bathroom fitting",
-  "Kitchen sink",
-  "Motor / pump",
+  "Leaking Pipe",
+  "Clogged Drain",
+  "Water Heater Issue",
+  "Toilet Repair",
+  "Faucet Replacement",
   "Other",
 ];
 
-const propertyTypes = ["Apartment", "Independent house", "Villa", "Commercial"];
-
-const steps = [
-  { number: "1", label: "Issue details" },
-  { number: "2", label: "Location & time" },
-  { number: "3", label: "Photos & submit" },
-];
+const propertyTypes = ["Apartment", "Villa / Standalone House", "Commercial Office", "Retail Store"];
 
 export default function UploadPage() {
   const router = useRouter();
   const [images, setImages] = useState<string[]>([]);
-  const [video, setVideo] = useState<string | null>(null);
   const [isEmergency, setIsEmergency] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [dragActive, setDragActive] = useState(false);
 
-  const handleImageUpload = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (!files) return;
-      const remainingSlots = 10 - images.length;
-      Array.from(files)
-        .slice(0, remainingSlots)
-        .forEach((file) => {
-          const url = URL.createObjectURL(file);
-          setImages((prev) => [...prev, url]);
-        });
-    },
-    [images.length]
-  );
+  const [category, setCategory] = useState("");
+  const [propertyType, setPropertyType] = useState(propertyTypes[0]);
+  const [description, setDescription] = useState("");
+  const [address, setAddress] = useState("");
+  const [landmark, setLandmark] = useState("");
+  const [preferredTime, setPreferredTime] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
 
-  const handleVideoUpload = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (!files || files.length === 0) return;
-      const url = URL.createObjectURL(files[0]);
-      setVideo(url);
-    },
-    []
-  );
+  const handleImageUpload = useCallback((files: FileList | null) => {
+    if (!files) return;
+    const remainingSlots = 10 - images.length;
+    Array.from(files)
+      .slice(0, remainingSlots)
+      .forEach((file) => {
+        const url = URL.createObjectURL(file);
+        setImages((prev) => [...prev, url]);
+      });
+  }, [images.length]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageUpload(e.target.files);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    handleImageUpload(e.dataTransfer.files);
+  };
 
   const removeImage = useCallback((index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
-  const removeVideo = useCallback(() => {
-    setVideo(null);
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const category = formData.get("category") as string;
-    const description = formData.get("description") as string;
-    const address = formData.get("address") as string;
-    const landmark = formData.get("landmark") as string;
-    const preferredTime = formData.get("preferredTime") as string;
+    if (!category) {
+      setError("Please select an issue category.");
+      return;
+    }
+    if (images.length < 3) {
+      setError("Please upload at least 3 clear photos of the issue.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const res = await fetch("/api/bookings", {
@@ -92,6 +87,8 @@ export default function UploadPage() {
           landmark,
           isEmergency,
           preferredTime: preferredTime ? new Date(preferredTime).toISOString() : undefined,
+          fullName,
+          phone,
         }),
       });
 
@@ -111,73 +108,69 @@ export default function UploadPage() {
     }
   };
 
+  const uploadProgress = Math.min((images.length / 10) * 100, 100);
+
   return (
     <>
       <Navbar />
-      <main className="flex-1 bg-[#fafafa]">
-        <div className="mx-auto max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+      <main className="flex-1 bg-bg-main">
+        <div className="mx-auto max-w-[1200px] px-6 py-10 lg:py-16">
           {/* Header */}
-          <div className="mb-10">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 text-[14px] font-medium text-[#62646a] hover:text-[#f97316]"
-            >
-              <ArrowRight size={14} className="rotate-180" /> Back to home
-            </Link>
-            <h1 className="mt-4 text-heading-lg text-[#222325]">
-              Describe your plumbing issue
-            </h1>
-            <p className="mt-2 text-[17px] text-[#62646a]">
-              Upload photos and details. Our experts will review and send an
-              estimate shortly.
-            </p>
-          </div>
-
-          {/* Steps */}
-          <div className="mb-10 flex items-center gap-2">
-            {steps.map((step, idx) => (
-              <div key={step.label} className="flex items-center">
-                <div className="flex items-center gap-2 rounded-full bg-[#222325] px-4 py-2 text-[13px] font-semibold text-white">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[11px]">
-                    {step.number}
-                  </span>
-                  {step.label}
-                </div>
-                {idx < steps.length - 1 && (
-                  <div className="mx-3 h-px w-8 bg-[#dadbdd]" />
-                )}
+          <header className="mb-10">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <h1 className="mb-2 text-3xl font-bold text-primary md:text-4xl lg:text-[48px] lg:leading-[1.1]">
+                  Describe your plumbing issue
+                </h1>
+                <p className="max-w-2xl text-lg text-on-surface-variant">
+                  Provide details about your problem so our experts can provide a fast, accurate estimate.
+                </p>
               </div>
-            ))}
-          </div>
+
+              <div className="flex items-center gap-3 rounded-xl bg-surface-container p-2">
+                <span className="text-sm font-medium uppercase tracking-wider text-on-surface-variant">
+                  This is an emergency
+                </span>
+                <label className="relative inline-block h-6 w-12 cursor-pointer transition ease-in-out">
+                  <input
+                    type="checkbox"
+                    checked={isEmergency}
+                    onChange={(e) => setIsEmergency(e.target.checked)}
+                    className="peer h-0 w-0 opacity-0"
+                  />
+                  <span className="absolute inset-0 cursor-pointer rounded-full bg-outline-variant transition peer-checked:bg-secondary" />
+                  <span className="absolute bottom-1 left-1 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-6" />
+                </label>
+              </div>
+            </div>
+          </header>
 
           {error && (
-            <div className="mb-6 flex items-center gap-2 rounded-[12px] border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-700">
-              <AlertCircle size={18} />
+            <div className="mb-6 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-error">
+              <Icon name="error" size={18} />
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1fr_400px]">
-            {/* Main Form */}
-            <div className="space-y-8">
-              {/* Issue details card */}
-              <div className="rounded-[20px] border border-[#e4e4e7] bg-white p-6 shadow-sm">
-                <div className="mb-5 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#fff7ed] text-[#f97316]">
-                    <Camera size={20} />
-                  </div>
-                  <h2 className="text-[18px] font-semibold text-[#222325]">Issue details</h2>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+            {/* Left form */}
+            <div className="space-y-6 lg:col-span-8">
+              {/* Issue Details */}
+              <section className="rounded-xl border border-border-subtle bg-surface-card p-6 shadow-sm">
+                <div className="mb-6 flex items-center gap-2 text-primary">
+                  <Icon name="report_problem" size={24} />
+                  <h2 className="text-2xl font-semibold">Issue Details</h2>
                 </div>
-
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-[14px] font-semibold text-[#222325]">
-                      Issue category
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="category" className="text-xs font-medium uppercase text-on-surface-variant">
+                      Issue Category
                     </label>
                     <select
-                      name="category"
-                      required
-                      className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] focus:border-[#f97316]"
+                      id="category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-base text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                     >
                       <option value="">Select a category</option>
                       {categories.map((cat) => (
@@ -187,245 +180,253 @@ export default function UploadPage() {
                       ))}
                     </select>
                   </div>
-
-                  <div>
-                    <label className="block text-[14px] font-semibold text-[#222325]">
-                      Describe the issue
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="propertyType" className="text-xs font-medium uppercase text-on-surface-variant">
+                      Property Type
+                    </label>
+                    <select
+                      id="propertyType"
+                      value={propertyType}
+                      onChange={(e) => setPropertyType(e.target.value)}
+                      className="rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-base text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    >
+                      {propertyTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1 md:col-span-2">
+                    <label htmlFor="description" className="text-xs font-medium uppercase text-on-surface-variant">
+                      Problem Description
                     </label>
                     <textarea
-                      name="description"
-                      required
+                      id="description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
                       rows={4}
-                      placeholder="e.g. Kitchen tap has been dripping for 2 days and water pressure is low..."
-                      className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
+                      placeholder="Example: The kitchen sink is draining very slowly and there is a metallic smell..."
+                      className="resize-none rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-base text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                     />
                   </div>
+                </div>
+              </section>
 
-                  <div>
-                    <label className="block text-[14px] font-semibold text-[#222325]">
-                      Property type
+              {/* Location & Arrival */}
+              <section className="rounded-xl border border-border-subtle bg-surface-card p-6 shadow-sm">
+                <div className="mb-6 flex items-center gap-2 text-primary">
+                  <Icon name="location_on" size={24} />
+                  <h2 className="text-2xl font-semibold">Location & Arrival</h2>
+                </div>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="flex flex-col gap-1 md:col-span-2">
+                    <label htmlFor="address" className="text-xs font-medium uppercase text-on-surface-variant">
+                      Complete Address
                     </label>
-                    <div className="mt-2 flex flex-wrap gap-3">
-                      {propertyTypes.map((type) => (
-                        <label
-                          key={type}
-                          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#dadbdd] bg-white px-4 py-2.5 text-[14px] text-[#222325] transition-colors has-[:checked]:border-[#f97316] has-[:checked]:bg-[#fff7ed] has-[:checked]:text-[#f97316]"
-                        >
-                          <input
-                            type="radio"
-                            name="propertyType"
-                            value={type}
-                            className="h-4 w-4 accent-[#f97316]"
-                          />
-                          {type}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Location & time card */}
-              <div className="rounded-[20px] border border-[#e4e4e7] bg-white p-6 shadow-sm">
-                <div className="mb-5 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#fff7ed] text-[#f97316]">
-                    <Home size={20} />
-                  </div>
-                  <h2 className="text-[18px] font-semibold text-[#222325]">Location & visit time</h2>
-                </div>
-
-                <div className="space-y-5">
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-[14px] font-semibold text-[#222325]">
-                        Address
-                      </label>
-                      <input
-                        type="text"
-                        name="address"
-                        required
-                        placeholder="Full address"
-                        className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[14px] font-semibold text-[#222325]">
-                        Landmark
-                      </label>
-                      <input
-                        type="text"
-                        name="landmark"
-                        placeholder="Nearby landmark"
-                        className="mt-2 w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-[14px] font-semibold text-[#222325]">
-                        Preferred visit time
-                      </label>
-                      <div className="relative mt-2">
-                        <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74767e]" />
-                        <input
-                          type="datetime-local"
-                          name="preferredTime"
-                          className="w-full rounded-[12px] border border-[#dadbdd] bg-white py-3 pl-11 pr-4 text-[15px] text-[#222325] focus:border-[#f97316]"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-[14px] font-semibold text-[#222325]">
-                        Contact number
-                      </label>
-                      <div className="relative mt-2">
-                        <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74767e]" />
-                        <input
-                          type="tel"
-                          name="phone"
-                          required
-                          placeholder="+91 98765 43210"
-                          className="w-full rounded-[12px] border border-[#dadbdd] bg-white py-3 pl-11 pr-4 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <label className={`flex cursor-pointer items-start gap-4 rounded-[16px] border p-4 transition-colors ${isEmergency ? "border-red-300 bg-red-50" : "border-[#dadbdd] bg-white hover:border-[#f97316]"}`}>
                     <input
-                      type="checkbox"
-                      checked={isEmergency}
-                      onChange={(e) => setIsEmergency(e.target.checked)}
-                      className="mt-1 h-5 w-5 accent-[#f97316]"
+                      id="address"
+                      type="text"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Street name, Building number, Area"
+                      className="rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-base text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                     />
-                    <div>
-                      <span className={`block text-[15px] font-semibold ${isEmergency ? "text-red-700" : "text-[#222325]"}`}>
-                        This is an emergency
-                      </span>
-                      <span className="text-[14px] text-[#62646a]">
-                        Burst pipes, major leaks, or no water supply — we prioritize these.
-                      </span>
-                    </div>
-                  </label>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="landmark" className="text-xs font-medium uppercase text-on-surface-variant">
+                      Landmark (Optional)
+                    </label>
+                    <input
+                      id="landmark"
+                      type="text"
+                      value={landmark}
+                      onChange={(e) => setLandmark(e.target.value)}
+                      placeholder="Near Green Park Mall"
+                      className="rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-base text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="preferredTime" className="text-xs font-medium uppercase text-on-surface-variant">
+                      Preferred Visit Time
+                    </label>
+                    <input
+                      id="preferredTime"
+                      type="datetime-local"
+                      value={preferredTime}
+                      onChange={(e) => setPreferredTime(e.target.value)}
+                      className="rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-base text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                  </div>
                 </div>
-              </div>
+              </section>
+
+              {/* Contact Information */}
+              <section className="rounded-xl border border-border-subtle bg-surface-card p-6 shadow-sm">
+                <div className="mb-6 flex items-center gap-2 text-primary">
+                  <Icon name="contact_phone" size={24} />
+                  <h2 className="text-2xl font-semibold">Contact Information</h2>
+                </div>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="fullName" className="text-xs font-medium uppercase text-on-surface-variant">
+                      Full Name
+                    </label>
+                    <input
+                      id="fullName"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="John Doe"
+                      className="rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-base text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="phone" className="text-xs font-medium uppercase text-on-surface-variant">
+                      Mobile Number
+                    </label>
+                    <div className="flex">
+                      <span className="inline-flex items-center rounded-l-lg border border-r-0 border-border-subtle bg-surface-container-low px-4 text-on-surface-variant">
+                        +91
+                      </span>
+                      <input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="98765 43210"
+                        className="flex-1 rounded-r-lg border border-border-subtle bg-white px-4 py-2.5 text-base text-primary outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
 
-            {/* Media Upload Sidebar */}
-            <div className="h-fit space-y-6 rounded-[20px] border border-[#e4e4e7] bg-white p-6 shadow-sm lg:p-8">
-              <div>
-                <h2 className="text-[18px] font-semibold text-[#222325]">Upload media</h2>
-                <p className="mt-1 text-[14px] text-[#62646a]">
-                  Photos help us assess the issue faster.
-                </p>
-              </div>
-
-              {/* Photos */}
-              <div>
-                <label className="flex items-center justify-between text-[14px] font-semibold text-[#222325]">
-                  Photos
-                  <span className="text-[12px] font-normal text-[#74767e]">3–10 recommended</span>
-                </label>
-
-                <label className="mt-3 flex cursor-pointer flex-col items-center justify-center rounded-[16px] border-2 border-dashed border-[#dadbdd] bg-[#fafafa] px-4 py-10 text-center transition-colors hover:border-[#f97316] hover:bg-[#fff7ed]">
-                  <UploadCloud size={40} className="text-[#f97316]" />
-                  <span className="mt-3 text-[15px] font-semibold text-[#222325]">
-                    Click to upload photos
-                  </span>
-                  <span className="mt-1 text-[13px] text-[#74767e]">
-                    JPG, PNG up to 10MB each
-                  </span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                </label>
-
-                {images.length > 0 && (
-                  <div className="mt-4 grid grid-cols-3 gap-3">
-                    {images.map((src, index) => (
-                      <div key={index} className="relative aspect-square">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={src}
-                          alt={`Upload preview ${index + 1}`}
-                          className="h-full w-full rounded-[10px] object-cover"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#222325] text-white shadow-md hover:bg-[#111]"
-                          aria-label="Remove image"
-                        >
-                          <X size={12} />
-                        </button>
-                      </div>
-                    ))}
+            {/* Right sidebar */}
+            <aside className="sticky top-24 space-y-6 lg:col-span-4">
+              {/* Visual Documentation */}
+              <div className="relative overflow-hidden rounded-xl bg-primary p-6 text-on-primary shadow-xl">
+                <div className="absolute inset-0 opacity-5 pointer-events-none">
+                  <svg height="100%" width="100%">
+                    <pattern height="40" id="grid" patternUnits="userSpaceOnUse" width="40">
+                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
+                    </pattern>
+                    <rect fill="url(#grid)" height="100%" width="100%" />
+                  </svg>
+                </div>
+                <div className="relative z-10">
+                  <div className="mb-4 flex items-center gap-2">
+                    <Icon name="add_a_photo" filled className="text-secondary-container" size={24} />
+                    <h3 className="text-xl font-semibold">Visual Documentation</h3>
                   </div>
-                )}
-              </div>
-
-              {/* Video */}
-              <div>
-                <label className="text-[14px] font-semibold text-[#222325]">
-                  Optional video
-                </label>
-
-                {!video ? (
-                  <label className="mt-3 flex cursor-pointer flex-col items-center justify-center rounded-[16px] border-2 border-dashed border-[#dadbdd] bg-[#fafafa] px-4 py-8 text-center transition-colors hover:border-[#f97316] hover:bg-[#fff7ed]">
-                    <span className="text-[15px] font-semibold text-[#222325]">
-                      Upload a short video
-                    </span>
-                    <span className="mt-1 text-[13px] text-[#74767e]">
-                      MP4, MOV up to 50MB
-                    </span>
+                  <p className="mb-5 text-base text-on-primary-container">
+                    Please upload 3-10 clear photos or a short video of the issue. This helps us see what you see.
+                  </p>
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDragActive(true);
+                    }}
+                    onDragLeave={() => setDragActive(false)}
+                    onDrop={handleDrop}
+                    className={`relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-on-primary-container p-8 text-center transition-colors hover:bg-white/5 ${
+                      dragActive ? "bg-white/10" : ""
+                    }`}
+                  >
+                    <Icon name="cloud_upload" size={48} className="mb-3 transition-transform group-hover:scale-110" />
+                    <p className="mb-1 text-sm font-medium">Drag and drop files here</p>
+                    <p className="text-xs opacity-60">Supported formats: JPG, PNG, MP4</p>
                     <input
                       type="file"
-                      accept="video/*"
-                      className="hidden"
-                      onChange={handleVideoUpload}
+                      accept="image/*,video/*"
+                      multiple
+                      className="absolute inset-0 cursor-pointer opacity-0"
+                      onChange={handleChange}
                     />
-                  </label>
-                ) : (
-                  <div className="relative mt-3 aspect-video overflow-hidden rounded-[12px]">
-                    <video
-                      src={video}
-                      controls
-                      className="h-full w-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeVideo}
-                      className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#222325] text-white shadow-md hover:bg-[#111]"
-                      aria-label="Remove video"
-                    >
-                      <X size={12} />
-                    </button>
                   </div>
-                )}
+
+                  {images.length > 0 && (
+                    <div className="mt-4 grid grid-cols-4 gap-2">
+                      {images.map((src, index) => (
+                        <div key={index} className="relative aspect-square">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={src}
+                            alt={`Upload ${index + 1}`}
+                            className="h-full w-full rounded-lg object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-secondary text-xs text-white shadow"
+                            aria-label="Remove"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="mt-5 space-y-2">
+                    <div className="flex justify-between text-xs font-medium">
+                      <span>Minimum required: 3</span>
+                      <span>{images.length}/10 uploaded</span>
+                    </div>
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-on-primary-container">
+                      <div
+                        className="h-full bg-secondary-container transition-all duration-500"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#f97316] px-6 py-4 text-[16px] font-semibold text-white shadow-[0_8px_24px_-6px_rgba(249,115,22,0.3)] hover:bg-[#ea580c] disabled:opacity-60 transition-colors"
-              >
-                {loading ? "Submitting..." : "Submit request"}
-                {!loading && <ArrowRight size={18} />}
-              </button>
+              {/* Review Preview */}
+              <div className="rounded-xl border border-border-subtle bg-surface-card p-4 shadow-sm">
+                <h4 className="mb-3 text-xs font-medium uppercase text-on-surface-variant">Review Preview</h4>
+                <div className="relative aspect-[1.22] w-full overflow-hidden rounded-lg bg-surface-container">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/trust-bg.jpg"
+                    alt="Preview"
+                    className="h-full w-full object-cover opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Icon name="image_search" size={48} className="text-primary/20" />
+                  </div>
+                </div>
+              </div>
 
-              <div className="flex items-start gap-2 rounded-[12px] bg-[#fff7ed] p-3">
-                <CheckCircle size={16} className="mt-0.5 shrink-0 text-[#f97316]" />
-                <p className="text-[12px] leading-[1.5] text-[#62646a]">
-                  You will receive an estimated quote within 2 hours.
+              {/* Final Action */}
+              <div
+                className={`rounded-xl border-t-4 bg-surface-container-high p-6 shadow-lg transition-colors ${
+                  isEmergency ? "animate-pulse border-error-red" : "border-secondary"
+                }`}
+              >
+                <p className="mb-5 text-base text-on-surface">
+                  By submitting, you agree to our{" "}
+                  <a href="#" className="font-medium text-secondary underline">
+                    Service Terms
+                  </a>
+                  . A technician will contact you shortly after reviewing your request.
+                </p>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-secondary py-3.5 text-base font-bold text-on-secondary shadow-lg transition-all hover:shadow-xl active:scale-[0.98] disabled:opacity-60"
+                >
+                  <span>{loading ? "Submitting..." : "Submit Request"}</span>
+                  <Icon name="send" size={20} />
+                </button>
+                <p className="mt-4 flex items-center justify-center gap-1 text-center text-xs text-on-surface-variant">
+                  <Icon name="verified_user" size={16} />
+                  Secure 128-bit Encrypted Request
                 </p>
               </div>
-            </div>
+            </aside>
           </form>
         </div>
       </main>
