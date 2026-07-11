@@ -36,12 +36,6 @@ export default function Navbar() {
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-1">
           <Link
-            href="/upload"
-            className="rounded-[8px] px-4 py-2 text-[14px] font-medium text-[#62646a] hover:bg-[#f4f4f5] hover:text-[#222325] transition-colors"
-          >
-            Get estimate
-          </Link>
-          <Link
             href="/login"
             className="rounded-[8px] px-4 py-2 text-[14px] font-medium text-[#62646a] hover:bg-[#f4f4f5] hover:text-[#222325] transition-colors"
           >
@@ -51,7 +45,7 @@ export default function Navbar() {
             href="/upload"
             className="ml-2 rounded-[8px] bg-[#f97316] px-5 py-2.5 text-[14px] font-semibold text-white shadow-[0_4px_12px_-2px_rgba(249,115,22,0.25)] hover:bg-[#ea580c] transition-colors"
           >
-            Book now
+            Get estimate
           </Link>
         </div>
 
@@ -80,13 +74,6 @@ export default function Navbar() {
               </button>
             </div>
             <Link
-              href="/upload"
-              className="rounded-[8px] px-4 py-3 text-[16px] font-medium text-[#62646a] hover:bg-[#f4f4f5]"
-              onClick={() => setMobileOpen(false)}
-            >
-              Get estimate
-            </Link>
-            <Link
               href="/login"
               className="rounded-[8px] px-4 py-3 text-[16px] font-medium text-[#62646a] hover:bg-[#f4f4f5]"
               onClick={() => setMobileOpen(false)}
@@ -98,7 +85,7 @@ export default function Navbar() {
               className="mt-2 rounded-[8px] bg-[#f97316] px-5 py-3 text-center text-[16px] font-semibold text-white"
               onClick={() => setMobileOpen(false)}
             >
-              Book now
+              Get estimate
             </Link>
           </div>
         </div>
