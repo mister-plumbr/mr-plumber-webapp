@@ -178,7 +178,7 @@ export default function UploadPage() {
     }
   };
 
-  const cardClass = "rounded-[20px] border border-[#e4e4e7] bg-white p-6 shadow-sm md:p-8";
+  const cardClass = "rounded-[20px] border border-[#e4e4e7] bg-white p-6 shadow-sm sm:p-8 md:px-12 md:py-10";
   const inputClass =
     "w-full rounded-[12px] border border-[#dadbdd] bg-white px-4 py-3 text-[15px] text-[#222325] placeholder:text-[#a1a1aa] focus:border-[#f97316]";
 
