@@ -38,6 +38,8 @@ In your Vercel project dashboard:
    |------|-------|-------------|
    | `MONGODB_URI` | `mongodb+srv://...` | Production, Preview, Development |
    | `JWT_SECRET` | A random 32+ character string | Production, Preview, Development |
+   | `BLOB_STORE_ID` | Your Vercel Blob store ID | Production, Preview, Development |
+   | `BLOB_READ_WRITE_TOKEN` | Your Vercel Blob read/write token | Production, Preview, Development |
 
 3. **Redeploy** the project.
 
@@ -81,5 +83,5 @@ Open the live URL Vercel gives you and test these flows:
 
 ## Notes
 
-- Image uploads currently preview locally only. To store real images, add Vercel Blob later and set `BLOB_READ_WRITE_TOKEN`.
+- Image uploads currently preview locally only. To store real images, Vercel Blob is configured via `BLOB_STORE_ID` and `BLOB_READ_WRITE_TOKEN`.
 - Do **not** commit `.env` — it is already in `.gitignore`.
