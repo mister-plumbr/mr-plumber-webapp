@@ -190,7 +190,7 @@ export default function OpsDashboardPage() {
     if (!selected) return;
     const parts = estimate.parts;
     const baseTotal = estimate.labour + estimate.travel + parts.reduce((s, p) => s + p.cost, 0);
-    const buffer = Math.round((estimate.range.max - baseTotal) / baseTotal * 100) || 15;
+    const buffer = Math.round(((estimate.range.max - baseTotal) / baseTotal) * 100) || 15;
 
     const res = await fetch(`/api/bookings/${selected.id}/estimate`, {
       method: "POST",
@@ -271,7 +271,7 @@ export default function OpsDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+      <div className="flex h-screen items-center justify-center bg-[#fafafa]">
         <p className="text-[#62646a]">Loading operations dashboard...</p>
       </div>
     );
@@ -279,7 +279,7 @@ export default function OpsDashboardPage() {
 
   if (error) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+      <div className="flex h-screen items-center justify-center bg-[#fafafa]">
         <p className="text-red-600">{error}</p>
       </div>
     );
@@ -287,23 +287,23 @@ export default function OpsDashboardPage() {
 
   if (!selected) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+      <div className="flex h-screen items-center justify-center bg-[#fafafa]">
         <p className="text-[#62646a]">No requests in queue.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen flex-col bg-[#f4f4f5]">
+    <div className="flex h-screen flex-col bg-[#fafafa]">
       {/* Top bar */}
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#dadbdd] bg-white px-4 sm:px-6 lg:px-8">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#e4e4e7] bg-white px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-semibold tracking-tight text-[#222325]">
               mister plumbr<span className="text-[#f97316]">.</span>
             </span>
           </Link>
-          <span className="rounded-full bg-[#f97316]/10 px-2.5 py-0.5 text-[11px] font-bold text-[#f97316]">
+          <span className="rounded-full bg-[#fff7ed] px-2.5 py-0.5 text-[11px] font-bold text-[#f97316]">
             OPS
           </span>
         </div>
@@ -320,8 +320,8 @@ export default function OpsDashboardPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Queue sidebar */}
-        <div className="flex w-full flex-col border-r border-[#dadbdd] bg-white sm:w-[360px]">
-          <div className="border-b border-[#dadbdd] p-4">
+        <div className="flex w-full flex-col border-r border-[#e4e4e7] bg-white sm:w-[360px]">
+          <div className="border-b border-[#e4e4e7] p-4">
             <div className="flex gap-2 overflow-x-auto pb-2">
               {filters.map((f) => (
                 <button
@@ -364,7 +364,7 @@ export default function OpsDashboardPage() {
                     </span>
                   )}
                 </div>
-                <h1 className="mt-1 text-[28px] font-semibold text-[#222325]">
+                <h1 className="mt-1 text-[26px] font-semibold leading-tight text-[#222325]">
                   {selected.title}
                 </h1>
                 <p className="text-[14px] text-[#62646a]">
@@ -396,34 +396,34 @@ export default function OpsDashboardPage() {
             <div className="mt-8 grid gap-6 lg:grid-cols-2">
               {/* Left column */}
               <div className="space-y-6">
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-[#222325]">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                  <h3 className="text-[15px] font-semibold text-[#222325]">
                     Customer request
                   </h3>
-                  <p className="mt-2 text-[14px] leading-[1.57] text-[#62646a]">
+                  <p className="mt-2 text-[14px] leading-[1.6] text-[#62646a]">
                     {selected.description}
                   </p>
                   <div className="mt-4 space-y-2 text-[13px]">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-4">
                       <span className="text-[#74767e]">Address</span>
                       <span className="max-w-xs text-right text-[#222325]">
                         {selected.address}
                       </span>
                     </div>
                     {selected.landmark && (
-                      <div className="flex justify-between">
+                      <div className="flex justify-between gap-4">
                         <span className="text-[#74767e]">Landmark</span>
                         <span className="text-[#222325]">{selected.landmark}</span>
                       </div>
                     )}
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-4">
                       <span className="text-[#74767e]">Submitted</span>
                       <span className="text-[#222325]">
                         {formatDateTime(selected.createdAt)}
                       </span>
                     </div>
                     {selected.preferredTime && (
-                      <div className="flex justify-between">
+                      <div className="flex justify-between gap-4">
                         <span className="text-[#74767e]">Preferred visit</span>
                         <span className="text-[#222325]">
                           {formatDateTime(selected.preferredTime)}
@@ -431,10 +431,10 @@ export default function OpsDashboardPage() {
                       </div>
                     )}
                   </div>
-                </div>
+                </section>
 
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-[#222325]">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                  <h3 className="text-[15px] font-semibold text-[#222325]">
                     Photos & video
                   </h3>
                   <div className="mt-3 grid grid-cols-3 gap-3">
@@ -460,10 +460,10 @@ export default function OpsDashboardPage() {
                       </p>
                     )}
                   </div>
-                </div>
+                </section>
 
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-[#222325]">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                  <h3 className="text-[15px] font-semibold text-[#222325]">
                     Internal notes
                   </h3>
                   <textarea
@@ -471,7 +471,7 @@ export default function OpsDashboardPage() {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Add notes visible only to operations team..."
-                    className="mt-2 w-full rounded-[12px] border border-[#c5c6c9] px-3 py-2 text-[14px]"
+                    className="mt-2 w-full rounded-[10px] border border-[#dadbdd] px-3 py-2 text-[14px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
                   />
                   <button
                     type="button"
@@ -480,7 +480,7 @@ export default function OpsDashboardPage() {
                   >
                     Save notes
                   </button>
-                </div>
+                </section>
               </div>
 
               {/* Right column */}
@@ -495,8 +495,8 @@ export default function OpsDashboardPage() {
                 )}
 
                 {selected.estimate && (
-                  <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                    <h3 className="text-[16px] font-semibold text-[#222325]">
+                  <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                    <h3 className="text-[15px] font-semibold text-[#222325]">
                       Current estimate
                     </h3>
                     <p className="mt-2 text-[28px] font-semibold text-[#222325]">
@@ -522,7 +522,7 @@ export default function OpsDashboardPage() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </section>
                 )}
 
                 {(selected.status === "Estimate Accepted" ||
@@ -534,8 +534,8 @@ export default function OpsDashboardPage() {
                 )}
 
                 {selected.plumber && (
-                  <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                    <h3 className="text-[16px] font-semibold text-[#222325]">
+                  <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                    <h3 className="text-[15px] font-semibold text-[#222325]">
                       Assigned plumber
                     </h3>
                     <div className="mt-3 flex items-center gap-3">
@@ -556,11 +556,11 @@ export default function OpsDashboardPage() {
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </section>
                 )}
 
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-[#222325]">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                  <h3 className="text-[15px] font-semibold text-[#222325]">
                     Update status
                   </h3>
                   <p className="mt-1 text-[13px] text-[#62646a]">
@@ -573,7 +573,7 @@ export default function OpsDashboardPage() {
                   >
                     Advance to next status
                   </button>
-                </div>
+                </section>
               </div>
             </div>
           </div>

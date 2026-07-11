@@ -50,15 +50,15 @@ export default function QueueList({
               className={`w-full rounded-[12px] border p-4 text-left transition-all ${
                 selectedId === booking.id
                   ? "border-[#f97316] bg-[#fff7ed]"
-                  : "border-[#dadbdd] bg-white hover:border-[#c5c6c9]"
+                  : "border-[#e4e4e7] bg-white hover:border-[#d4d4d8] hover:shadow-sm"
               }`}
             >
               <div className="flex items-start justify-between gap-2">
-                <div>
+                <div className="min-w-0">
                   <p className="text-[11px] font-medium text-[#74767e]">
                     {booking.id}
                   </p>
-                  <h3 className="mt-0.5 text-[15px] font-semibold text-[#222325]">
+                  <h3 className="mt-0.5 truncate text-[15px] font-semibold text-[#222325]">
                     {booking.title}
                   </h3>
                 </div>
@@ -94,7 +94,7 @@ export default function QueueList({
         })}
 
         {filtered.length === 0 && (
-          <div className="rounded-[12px] border border-dashed border-[#dadbdd] p-8 text-center">
+          <div className="rounded-[12px] border border-dashed border-[#e4e4e7] p-8 text-center">
             <p className="text-[14px] text-[#74767e]">
               No requests in this queue.
             </p>

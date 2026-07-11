@@ -8,48 +8,48 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 h-16 border-b border-[#dadbdd] bg-white">
-      <nav className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-[#dadbdd] bg-white/95 backdrop-blur-sm">
+      <nav className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2.5">
           <Logo size={32} />
-          <span className="text-xl font-semibold tracking-tight text-[#222325]">
+          <span className="text-[20px] font-semibold tracking-tight text-[#222325]">
             mister plumbr
             <span className="text-[#f97316]">.</span>
           </span>
         </Link>
 
         {/* Desktop Search */}
-        <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-          <div className="flex w-full items-center rounded-[4px] border border-[#dadbdd] bg-white overflow-hidden">
+        <div className="hidden md:flex flex-1 max-w-md mx-8">
+          <div className="flex w-full items-center overflow-hidden rounded-[12px] border border-[#dadbdd] bg-white shadow-sm focus-within:border-[#f97316] focus-within:ring-3 focus-within:ring-[#f97316]/10 transition-all">
             <input
               type="text"
-              placeholder="Search services..."
-              className="flex-1 px-4 py-2 text-[16px] text-[#222325] placeholder:text-[#74767e] bg-transparent border-none focus:ring-0"
+              placeholder="Search plumbing services..."
+              className="flex-1 border-0 bg-transparent px-4 py-2.5 text-[14px] text-[#222325] placeholder:text-[#74767e] focus:ring-0"
             />
-            <button className="flex h-12 w-12 items-center justify-center bg-[#222325] text-white hover:bg-[#111] transition-colors">
-              <Search size={20} />
+            <button className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#222325] text-white m-1 hover:bg-[#111] transition-colors">
+              <Search size={18} />
             </button>
           </div>
         </div>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-1">
           <Link
             href="/upload"
-            className="text-[16px] font-normal text-[#62646a] hover:text-[#f97316] transition-colors"
+            className="rounded-[8px] px-4 py-2 text-[14px] font-medium text-[#62646a] hover:bg-[#f4f4f5] hover:text-[#222325] transition-colors"
           >
             Get estimate
           </Link>
           <Link
             href="/login"
-            className="text-[16px] font-normal text-[#62646a] hover:text-[#f97316] transition-colors"
+            className="rounded-[8px] px-4 py-2 text-[14px] font-medium text-[#62646a] hover:bg-[#f4f4f5] hover:text-[#222325] transition-colors"
           >
             Sign in
           </Link>
           <Link
             href="/upload"
-            className="rounded-[8px] bg-[#222325] px-5 py-2.5 text-[16px] font-semibold text-white hover:bg-[#111] transition-colors"
+            className="ml-2 rounded-[8px] bg-[#f97316] px-5 py-2.5 text-[14px] font-semibold text-white shadow-[0_4px_12px_-2px_rgba(249,115,22,0.25)] hover:bg-[#ea580c] transition-colors"
           >
             Book now
           </Link>
@@ -57,7 +57,7 @@ export default function Navbar() {
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden p-2 text-[#222325]"
+          className="md:hidden p-2 text-[#222325] rounded-[8px] hover:bg-[#f4f4f5]"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -67,35 +67,35 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 border-b border-[#dadbdd] bg-white shadow-md">
-          <div className="mx-auto max-w-[1200px] px-4 py-4 flex flex-col gap-4">
-            <div className="flex w-full items-center rounded-[4px] border border-[#dadbdd] bg-white overflow-hidden">
+        <div className="md:hidden absolute top-16 left-0 right-0 border-b border-[#dadbdd] bg-white shadow-lg">
+          <div className="mx-auto max-w-[1200px] px-4 py-4 flex flex-col gap-2">
+            <div className="flex w-full items-center overflow-hidden rounded-[12px] border border-[#dadbdd] bg-white mb-2">
               <input
                 type="text"
-                placeholder="Search services..."
-                className="flex-1 px-4 py-2 text-[16px] text-[#222325] placeholder:text-[#74767e] bg-transparent border-none focus:ring-0"
+                placeholder="Search plumbing services..."
+                className="flex-1 border-0 bg-transparent px-4 py-3 text-[14px] text-[#222325] placeholder:text-[#74767e] focus:ring-0"
               />
-              <button className="flex h-12 w-12 items-center justify-center bg-[#222325] text-white">
-                <Search size={20} />
+              <button className="flex h-10 w-10 items-center justify-center bg-[#222325] text-white m-1 rounded-[8px]">
+                <Search size={18} />
               </button>
             </div>
             <Link
               href="/upload"
-              className="text-[16px] font-normal text-[#62646a] hover:text-[#f97316]"
+              className="rounded-[8px] px-4 py-3 text-[16px] font-medium text-[#62646a] hover:bg-[#f4f4f5]"
               onClick={() => setMobileOpen(false)}
             >
               Get estimate
             </Link>
             <Link
               href="/login"
-              className="text-[16px] font-normal text-[#62646a] hover:text-[#f97316]"
+              className="rounded-[8px] px-4 py-3 text-[16px] font-medium text-[#62646a] hover:bg-[#f4f4f5]"
               onClick={() => setMobileOpen(false)}
             >
               Sign in
             </Link>
             <Link
               href="/upload"
-              className="rounded-[8px] bg-[#222325] px-5 py-2.5 text-center text-[16px] font-semibold text-white"
+              className="mt-2 rounded-[8px] bg-[#f97316] px-5 py-3 text-center text-[16px] font-semibold text-white"
               onClick={() => setMobileOpen(false)}
             >
               Book now

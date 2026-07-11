@@ -5,7 +5,7 @@ import { Booking, formatCurrency } from "@/lib/data";
 
 interface EstimateBuilderProps {
   booking: Booking;
-  onSave: (estimate: NonNullable<Booking["estimate"]>) => void;
+  onSave: (estimate: NonNullable<Booking["estimate"]> & { bufferPercent?: number }) => void;
 }
 
 export default function EstimateBuilder({ booking, onSave }: EstimateBuilderProps) {
@@ -48,12 +48,13 @@ export default function EstimateBuilder({ booking, onSave }: EstimateBuilderProp
       notes,
       range: { min, max },
       expiresAt: expires.toISOString(),
+      bufferPercent,
     });
   };
 
   return (
-    <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-      <h3 className="text-[16px] font-semibold text-[#222325]">
+    <div className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+      <h3 className="text-[15px] font-semibold text-[#222325]">
         Build estimate
       </h3>
 
@@ -66,7 +67,7 @@ export default function EstimateBuilder({ booking, onSave }: EstimateBuilderProp
             type="number"
             value={labour}
             onChange={(e) => setLabour(Number(e.target.value) || 0)}
-            className="mt-1 w-full rounded-[8px] border border-[#c5c6c9] px-3 py-2 text-[14px]"
+            className="mt-1 w-full rounded-[8px] border border-[#dadbdd] px-3 py-2 text-[14px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
           />
         </div>
         <div>
@@ -77,7 +78,7 @@ export default function EstimateBuilder({ booking, onSave }: EstimateBuilderProp
             type="number"
             value={travel}
             onChange={(e) => setTravel(Number(e.target.value) || 0)}
-            className="mt-1 w-full rounded-[8px] border border-[#c5c6c9] px-3 py-2 text-[14px]"
+            className="mt-1 w-full rounded-[8px] border border-[#dadbdd] px-3 py-2 text-[14px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
           />
         </div>
       </div>
@@ -103,20 +104,20 @@ export default function EstimateBuilder({ booking, onSave }: EstimateBuilderProp
                 placeholder="Part name"
                 value={part.name}
                 onChange={(e) => updatePart(index, "name", e.target.value)}
-                className="flex-1 rounded-[8px] border border-[#c5c6c9] px-3 py-2 text-[14px]"
+                className="flex-1 rounded-[8px] border border-[#dadbdd] px-3 py-2 text-[14px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
               />
               <input
                 type="number"
                 placeholder="Cost"
                 value={part.cost || ""}
                 onChange={(e) => updatePart(index, "cost", e.target.value)}
-                className="w-28 rounded-[8px] border border-[#c5c6c9] px-3 py-2 text-[14px]"
+                className="w-28 rounded-[8px] border border-[#dadbdd] px-3 py-2 text-[14px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
               />
               {parts.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removePart(index)}
-                  className="rounded-[8px] border border-[#dadbdd] px-3 text-[#62646a] hover:bg-[#f9f9f9]"
+                  className="rounded-[8px] border border-[#e4e4e7] px-3 text-[#62646a] hover:bg-[#f4f4f5]"
                 >
                   ×
                 </button>
@@ -135,7 +136,7 @@ export default function EstimateBuilder({ booking, onSave }: EstimateBuilderProp
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Explain assumptions or conditions to customer..."
-          className="mt-1 w-full rounded-[8px] border border-[#c5c6c9] px-3 py-2 text-[14px]"
+          className="mt-1 w-full rounded-[8px] border border-[#dadbdd] px-3 py-2 text-[14px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
         />
       </div>
 

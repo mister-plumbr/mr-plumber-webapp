@@ -271,7 +271,7 @@ export default function PlumberDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+      <div className="flex h-screen items-center justify-center bg-[#fafafa]">
         <p className="text-[#62646a]">Loading jobs...</p>
       </div>
     );
@@ -279,7 +279,7 @@ export default function PlumberDashboardPage() {
 
   if (error) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+      <div className="flex h-screen items-center justify-center bg-[#fafafa]">
         <p className="text-red-600">{error}</p>
       </div>
     );
@@ -287,23 +287,23 @@ export default function PlumberDashboardPage() {
 
   if (!selected) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f4f4f5]">
+      <div className="flex h-screen items-center justify-center bg-[#fafafa]">
         <p className="text-[#62646a]">No jobs assigned today.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen flex-col bg-[#f4f4f5]">
+    <div className="flex h-screen flex-col bg-[#fafafa]">
       {/* Header */}
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#dadbdd] bg-white px-4 sm:px-6 lg:px-8">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#e4e4e7] bg-white px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-semibold tracking-tight text-[#222325]">
               mister plumbr<span className="text-[#f97316]">.</span>
             </span>
           </Link>
-          <span className="rounded-full bg-[#7c2d12]/10 px-2.5 py-0.5 text-[11px] font-bold text-[#7c2d12]">
+          <span className="rounded-full bg-[#fff7ed] px-2.5 py-0.5 text-[11px] font-bold text-[#f97316]">
             PLUMBER
           </span>
         </div>
@@ -322,8 +322,8 @@ export default function PlumberDashboardPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Job list */}
-        <div className="flex w-full flex-col border-r border-[#dadbdd] bg-white sm:w-[360px]">
-          <div className="border-b border-[#dadbdd] p-4">
+        <div className="flex w-full flex-col border-r border-[#e4e4e7] bg-white sm:w-[360px]">
+          <div className="border-b border-[#e4e4e7] p-4">
             <h2 className="text-[16px] font-semibold text-[#222325]">
               Today&apos;s jobs
             </h2>
@@ -342,6 +342,7 @@ export default function PlumberDashboardPage() {
                     setSelected(job);
                     setLabour(job.estimate?.labour ?? 0);
                     setMaterials(job.estimate?.parts ?? [{ name: "", cost: 0 }]);
+                    setSignature(null);
                   }}
                 />
               ))}
@@ -355,7 +356,7 @@ export default function PlumberDashboardPage() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div>
                 <p className="text-[13px] text-[#74767e]">{selected.id}</p>
-                <h1 className="mt-1 text-[28px] font-semibold text-[#222325]">
+                <h1 className="mt-1 text-[26px] font-semibold leading-tight text-[#222325]">
                   {selected.title}
                 </h1>
                 <p className="text-[14px] text-[#62646a]">
@@ -376,27 +377,27 @@ export default function PlumberDashboardPage() {
             <div className="mt-8 grid gap-6 lg:grid-cols-2">
               {/* Left */}
               <div className="space-y-6">
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-[#222325]">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                  <h3 className="text-[15px] font-semibold text-[#222325]">
                     Job details
                   </h3>
-                  <p className="mt-2 text-[14px] leading-[1.57] text-[#62646a]">
+                  <p className="mt-2 text-[14px] leading-[1.6] text-[#62646a]">
                     {selected.description}
                   </p>
                   <div className="mt-4 space-y-2 text-[13px]">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-4">
                       <span className="text-[#74767e]">Address</span>
                       <span className="max-w-xs text-right text-[#222325]">
                         {selected.address}
                       </span>
                     </div>
                     {selected.landmark && (
-                      <div className="flex justify-between">
+                      <div className="flex justify-between gap-4">
                         <span className="text-[#74767e]">Landmark</span>
                         <span className="text-[#222325]">{selected.landmark}</span>
                       </div>
                     )}
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-4">
                       <span className="text-[#74767e]">Preferred time</span>
                       <span className="text-[#222325]">
                         {selected.preferredTime
@@ -415,11 +416,11 @@ export default function PlumberDashboardPage() {
                   >
                     Open in Google Maps →
                   </a>
-                </div>
+                </section>
 
                 {/* Before photos */}
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-[#222325]">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                  <h3 className="text-[15px] font-semibold text-[#222325]">
                     Before photos
                   </h3>
                   <div className="mt-3 grid grid-cols-3 gap-3">
@@ -433,7 +434,7 @@ export default function PlumberDashboardPage() {
                         />
                       </div>
                     ))}
-                    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-[8px] border border-dashed border-[#c5c6c9] bg-[#fff7ed] text-[#f97316]">
+                    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-[8px] border border-dashed border-[#f97316] bg-[#fff7ed] text-[#f97316] hover:bg-[#ffedd5]">
                       <span className="text-2xl">+</span>
                       <input
                         type="file"
@@ -444,11 +445,11 @@ export default function PlumberDashboardPage() {
                       />
                     </label>
                   </div>
-                </div>
+                </section>
 
                 {/* After photos */}
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-[#222325]">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                  <h3 className="text-[15px] font-semibold text-[#222325]">
                     After photos
                   </h3>
                   <div className="mt-3 grid grid-cols-3 gap-3">
@@ -462,7 +463,7 @@ export default function PlumberDashboardPage() {
                         />
                       </div>
                     ))}
-                    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-[8px] border border-dashed border-[#c5c6c9] bg-[#fff7ed] text-[#f97316]">
+                    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-[8px] border border-dashed border-[#f97316] bg-[#fff7ed] text-[#f97316] hover:bg-[#ffedd5]">
                       <span className="text-2xl">+</span>
                       <input
                         type="file"
@@ -473,15 +474,15 @@ export default function PlumberDashboardPage() {
                       />
                     </label>
                   </div>
-                </div>
+                </section>
               </div>
 
               {/* Right */}
               <div className="space-y-6">
                 {/* Materials used */}
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-[16px] font-semibold text-[#222325]">
+                    <h3 className="text-[15px] font-semibold text-[#222325]">
                       Materials used
                     </h3>
                     <button
@@ -502,7 +503,7 @@ export default function PlumberDashboardPage() {
                           onChange={(e) =>
                             updateMaterial(idx, "name", e.target.value)
                           }
-                          className="flex-1 rounded-[8px] border border-[#c5c6c9] px-3 py-2 text-[13px]"
+                          className="flex-1 rounded-[8px] border border-[#dadbdd] px-3 py-2 text-[13px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
                         />
                         <input
                           type="number"
@@ -511,13 +512,13 @@ export default function PlumberDashboardPage() {
                           onChange={(e) =>
                             updateMaterial(idx, "cost", e.target.value)
                           }
-                          className="w-24 rounded-[8px] border border-[#c5c6c9] px-3 py-2 text-[13px]"
+                          className="w-24 rounded-[8px] border border-[#dadbdd] px-3 py-2 text-[13px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
                         />
                         {materials.length > 1 && (
                           <button
                             type="button"
                             onClick={() => removeMaterial(idx)}
-                            className="rounded-[8px] border border-[#dadbdd] px-2 text-[#62646a]"
+                            className="rounded-[8px] border border-[#e4e4e7] px-2 text-[#62646a] hover:bg-[#f4f4f5]"
                           >
                             ×
                           </button>
@@ -534,19 +535,19 @@ export default function PlumberDashboardPage() {
                       type="number"
                       value={labour}
                       onChange={(e) => setLabour(Number(e.target.value) || 0)}
-                      className="mt-1 w-full rounded-[8px] border border-[#c5c6c9] px-3 py-2 text-[13px]"
+                      className="mt-1 w-full rounded-[8px] border border-[#dadbdd] px-3 py-2 text-[13px] text-[#222325] outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20"
                     />
                   </div>
-                </div>
+                </section>
 
                 {/* Signature */}
-                <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-[#222325]">
+                <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+                  <h3 className="text-[15px] font-semibold text-[#222325]">
                     Customer signature
                   </h3>
                   <div className="mt-3">
                     {signature ? (
-                      <div className="rounded-[8px] border border-[#dadbdd] bg-white p-2">
+                      <div className="rounded-[8px] border border-[#e4e4e7] bg-white p-2">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={signature}
@@ -560,7 +561,7 @@ export default function PlumberDashboardPage() {
                         width={400}
                         height={120}
                         onMouseDown={startDrawing}
-                        className="w-full cursor-crosshair rounded-[8px] border border-[#c5c6c9] bg-white"
+                        className="w-full cursor-crosshair rounded-[8px] border border-[#dadbdd] bg-white"
                       />
                     )}
                   </div>
@@ -568,7 +569,7 @@ export default function PlumberDashboardPage() {
                     <button
                       type="button"
                       onClick={clearSignature}
-                      className="rounded-[8px] border border-[#dadbdd] px-4 py-2 text-[13px] font-semibold text-[#222325] hover:bg-[#f9f9f9]"
+                      className="rounded-[8px] border border-[#dadbdd] bg-white px-4 py-2 text-[13px] font-semibold text-[#222325] hover:bg-[#f9f9f9] transition-colors"
                     >
                       Clear
                     </button>
@@ -576,13 +577,13 @@ export default function PlumberDashboardPage() {
                       <button
                         type="button"
                         onClick={saveSignature}
-                        className="rounded-[8px] bg-[#222325] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#111]"
+                        className="rounded-[8px] bg-[#222325] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#111] transition-colors"
                       >
                         Save signature
                       </button>
                     )}
                   </div>
-                </div>
+                </section>
 
                 {/* Invoice */}
                 <InvoicePreview
@@ -607,14 +608,14 @@ export default function PlumberDashboardPage() {
                 )}
 
                 {selected.finalPrice && (
-                  <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
+                  <section className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
                     <p className="text-[14px] text-[#62646a]">
                       Invoice total:{" "}
                       <span className="font-semibold text-[#222325]">
                         {formatCurrency(selected.finalPrice)}
                       </span>
                     </p>
-                  </div>
+                  </section>
                 )}
               </div>
             </div>

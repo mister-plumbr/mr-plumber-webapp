@@ -21,15 +21,15 @@ export default function InvoicePreview({
   const total = subtotal + tax;
 
   return (
-    <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
+    <div className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="text-[16px] font-semibold text-[#222325]">
+        <h3 className="text-[15px] font-semibold text-[#222325]">
           Invoice preview
         </h3>
         <span className="text-[12px] text-[#74767e]">{job.id}</span>
       </div>
 
-      <div className="mt-4 border-b border-[#dadbdd] pb-4">
+      <div className="mt-4 border-b border-[#e4e4e7] pb-4">
         <p className="text-[14px] font-semibold text-[#222325]">
           Mister Plumbr Services Pvt. Ltd.
         </p>
@@ -56,7 +56,7 @@ export default function InvoicePreview({
             <span className="text-[#222325]">{formatCurrency(item.cost)}</span>
           </div>
         ))}
-        <div className="flex justify-between border-t border-[#dadbdd] pt-2">
+        <div className="flex justify-between border-t border-[#e4e4e7] pt-2">
           <span className="text-[#62646a]">Subtotal</span>
           <span className="text-[#222325]">{formatCurrency(subtotal)}</span>
         </div>

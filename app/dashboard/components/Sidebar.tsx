@@ -26,7 +26,7 @@ const navItems: NavItem[] = [
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-        <polyline points="17 8 12 3 7 8" />
+        <polyline points="16 8 12 3 7 8" />
         <line x1="12" x2="12" y1="3" y2="15" />
       </svg>
     ),
@@ -56,7 +56,7 @@ const navItems: NavItem[] = [
     href: "#",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+        <path d="M19 21v-2a4 4 0 0 1-4-4H9a4 4 0 0 1-4 4v2" />
         <circle cx="12" cy="7" r="4" />
       </svg>
     ),
@@ -67,10 +67,10 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-[#dadbdd] bg-white lg:flex">
-      <div className="p-6">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-[#e4e4e7] bg-white lg:flex">
+      <div className="border-b border-[#e4e4e7] p-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f97316] text-[16px] font-semibold text-white">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f97316] text-[15px] font-semibold text-white">
             RS
           </div>
           <div>
@@ -80,7 +80,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 px-4">
+      <nav className="flex-1 p-3">
         <ul className="space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -88,10 +88,10 @@ export default function Sidebar() {
               <li key={item.label}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-[8px] px-4 py-3 text-[14px] font-semibold transition-colors ${
+                  className={`flex items-center gap-3 rounded-[10px] px-4 py-3 text-[14px] font-medium transition-colors ${
                     isActive
                       ? "bg-[#fff7ed] text-[#f97316]"
-                      : "text-[#62646a] hover:bg-[#f9f9f9] hover:text-[#222325]"
+                      : "text-[#62646a] hover:bg-[#f4f4f5] hover:text-[#222325]"
                   }`}
                 >
                   {item.icon}
@@ -103,10 +103,10 @@ export default function Sidebar() {
         </ul>
       </nav>
 
-      <div className="border-t border-[#dadbdd] p-4">
+      <div className="border-t border-[#e4e4e7] p-3">
         <Link
           href="/"
-          className="flex items-center gap-3 rounded-[8px] px-4 py-3 text-[14px] font-semibold text-[#62646a] hover:bg-[#f9f9f9] hover:text-[#222325] transition-colors"
+          className="flex items-center gap-3 rounded-[10px] px-4 py-3 text-[14px] font-medium text-[#62646a] hover:bg-[#f4f4f5] hover:text-[#222325] transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

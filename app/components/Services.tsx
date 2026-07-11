@@ -1,46 +1,55 @@
 import Link from "next/link";
-import { ArrowRight } from "./icons";
+import { ArrowRight, Droplets, Tool, Wrench, Home, Calendar, ShieldCheck } from "./icons";
 
 const services = [
   {
     title: "Tap & Faucet Repair",
-    image: "🚰",
-    description: "Dripping taps, loose handles, cartridge replacement.",
+    description: "Dripping taps, loose handles, cartridge & washer replacement.",
+    icon: Droplets,
+    color: "bg-blue-50 text-blue-600",
   },
   {
     title: "Pipe Leak & Burst",
-    image: "🛠️",
     description: "Visible leaks, burst pipes, joint sealing, pipe replacement.",
+    icon: Tool,
+    color: "bg-red-50 text-red-600",
   },
   {
     title: "Drain Cleaning",
-    image: "🪠",
     description: "Clogged sinks, slow drains, kitchen grease blocks.",
+    icon: Wrench,
+    color: "bg-emerald-50 text-emerald-600",
   },
   {
     title: "Toilet Repair",
-    image: "🚽",
     description: "Flush issues, tank leaks, seat fitting, blockage removal.",
+    icon: Home,
+    color: "bg-purple-50 text-purple-600",
   },
   {
     title: "Water Heater",
-    image: "🌡️",
     description: "Geyser installation, thermostat fixes, leak repair.",
+    icon: Calendar,
+    color: "bg-amber-50 text-amber-600",
   },
   {
     title: "Bathroom Fittings",
-    image: "🚿",
     description: "Shower installs, mixer repair, silicone sealing.",
+    icon: ShieldCheck,
+    color: "bg-cyan-50 text-cyan-600",
   },
 ];
 
 export default function Services() {
   return (
-    <section className="bg-white py-16 sm:py-24">
+    <section className="bg-[#fafafa] py-20 sm:py-28">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 flex items-end justify-between">
+        <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-heading-lg text-[#222325]">
+            <span className="text-[13px] font-semibold uppercase tracking-wider text-[#f97316]">
+              Services
+            </span>
+            <h2 className="mt-3 text-heading-lg text-[#222325]">
               Popular services
             </h2>
             <p className="mt-2 text-[16px] text-[#62646a]">
@@ -49,9 +58,9 @@ export default function Services() {
           </div>
           <Link
             href="/upload"
-            className="hidden sm:inline-flex items-center gap-1 text-[16px] font-semibold text-[#f97316] hover:text-[#ea580c]"
+            className="inline-flex items-center gap-1 text-[15px] font-semibold text-[#f97316] hover:text-[#ea580c]"
           >
-            View all <ArrowRight size={16} />
+            View all services <ArrowRight size={16} />
           </Link>
         </div>
 
@@ -60,19 +69,22 @@ export default function Services() {
             <Link
               key={service.title}
               href="/upload"
-              className="group relative flex flex-col overflow-hidden rounded-[16px] bg-[#7c2d12] p-6 pb-0 shadow-md hover:shadow-lg transition-shadow"
+              className="group relative flex flex-col rounded-[20px] bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.1)]"
             >
-              <h3 className="text-[16px] font-semibold text-white">
+              <div className={`flex h-14 w-14 items-center justify-center rounded-[14px] ${service.color} transition-transform group-hover:scale-110`}>
+                <service.icon size={28} />
+              </div>
+              
+              <h3 className="mt-5 text-[18px] font-semibold text-[#222325]">
                 {service.title}
               </h3>
-              <p className="mt-1 text-[14px] text-white/80">
+              <p className="mt-2 flex-1 text-[15px] leading-[1.6] text-[#62646a]">
                 {service.description}
               </p>
-              <div className="mt-6 flex h-32 items-end justify-center text-6xl">
-                {service.image}
-              </div>
-              <div className="absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                <ArrowRight size={18} />
+              
+              <div className="mt-5 flex items-center gap-2 text-[14px] font-semibold text-[#f97316]">
+                Book now
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>
           ))}

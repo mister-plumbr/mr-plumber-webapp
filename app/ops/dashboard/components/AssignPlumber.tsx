@@ -17,8 +17,8 @@ export default function AssignPlumber({ plumbers, onAssign }: AssignPlumberProps
   };
 
   return (
-    <div className="rounded-[16px] border border-[#dadbdd] bg-white p-5">
-      <h3 className="text-[16px] font-semibold text-[#222325]">
+    <div className="rounded-[14px] border border-[#e4e4e7] bg-white p-5 shadow-sm">
+      <h3 className="text-[15px] font-semibold text-[#222325]">
         Assign plumber
       </h3>
       <p className="mt-1 text-[13px] text-[#62646a]">
@@ -32,7 +32,7 @@ export default function AssignPlumber({ plumbers, onAssign }: AssignPlumberProps
             className={`flex cursor-pointer items-center gap-3 rounded-[12px] border p-3 transition-colors ${
               selected === plumber.id
                 ? "border-[#f97316] bg-[#fff7ed]"
-                : "border-[#dadbdd] hover:border-[#c5c6c9]"
+                : "border-[#e4e4e7] hover:border-[#d4d4d8]"
             }`}
           >
             <input
@@ -46,7 +46,7 @@ export default function AssignPlumber({ plumbers, onAssign }: AssignPlumberProps
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#222325] text-[14px] font-semibold text-white">
               {plumber.initials}
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="text-[14px] font-semibold text-[#222325]">
                 {plumber.name}
               </p>
