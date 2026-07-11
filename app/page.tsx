@@ -4,6 +4,7 @@ import HowItWorks from "./components/HowItWorks";
 import Services from "./components/Services";
 import Trust from "./components/Trust";
 import Footer from "./components/Footer";
+import MobileBottomNav from "./components/MobileBottomNav";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         <Trust />
       </main>
       <Footer />
+      <MobileBottomNav />
     </>
   );
 }
